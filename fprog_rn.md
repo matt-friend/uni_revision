@@ -1,6 +1,6 @@
 # Functional Programming 2018/19
 
-## Lecture 1
+##### Lecture 1
 
 Functional Programming is about programming with values rather than statements. It encourages code that is:
 	* concise
@@ -32,7 +32,7 @@ To understand this code, we evaluate it:
 
 ---
 
-## Lecture 2
+##### Lecture 2
 
 ### Plain Old Datatypes
 
@@ -101,7 +101,7 @@ Left :: a -> Either a b
 Right :: b -> Either a b
 ```
 
-Together with Bool and Day, we hav introduced Either Bool Day which is a type with 9 values. They ar ethe following:
+Together with Bool and Day, we have  introduced Either Bool Day which is a type with 9 values. They ar ethe following:
 
 ```haskell
 Left True :: Either Bool Day
@@ -136,7 +136,7 @@ square :: Int -> Int
 square x = x * x
 ```
 
-A function takes input values to output values. Every functioon in Haskell takes exactly one input type to one output type.
+A function takes input values to output values. Every function in Haskell takes exactly one input type to one output type.
 
 The type of 'square' is 'Int -> Int'. The type of 'square 5' is just 'Int'.
 
@@ -147,10 +147,139 @@ two :: Int -> Int
 two x = 2
 ```
 
-This returns 2 no matter the input. e.g. two 5 = 2, two |_ = 2
+This returns 2 no matter the input. e.g. two 5 = 2, two |\_\ = 2
 
 ---
 
+##### Lecture 3
 
+We can combine functions by applying one followed by the other.
 
+e.g.
+
+```haskell
+	square (two 5)		|		two (square 5)
+= 	{def square}		|	=	{def two}
+	(two 5) * (two 5)	|		2
+= 	{def two}		|
+	2 * 2			|
+= 	{def '*'}		|
+	4			|
+```
+
+We could combine these fuctions into one manually:
+
+```haskell
+squareTwo :: Int -> Int
+squareTwo x = square (two x)
+```
+
+or 
+
+```haskell
+twoSquare :: Int -> Int
+twoSquare x = two (square x)
+```
+
+Doing this is painful. We need a way to compose functions with an operation:
+
+```haskell
+(.) :: (b -> c) -> (a -> b) -> (a -> c)
+(g.f) x = g (f x)
+```
+
+This '.' is called a "function composition". You write it with a full stop.
+
+### Evaluation
+
+The order of evaluation for functions is very important. There are two main strategies:
+	* normal evaluation (**lazy** evaluation) - this evaluates the outer most first, before moving inwards
+	* applicative evaluation (**eager** evaluation) - this evaluates inner most (parameters) first, then assembles outwards
+e.g.
+
+```haskell
+Normal / Lazy			 Applicative / Eager
+
+	square (two 5)		|		square (two 5)
+= 	{def square}		|	=	{def two}
+	(two 5) * (two 5)	|		square 2
+= 	{def two}		| 	=	{def square}
+	2 * 2			| 		2 * 2
+= 	{def '*'}		| 	=	{def '*'}
+	4			|		4
+```
+
+Which strategy is better? Eager appears to generate results faster. However, there can be problems. Consider the following:
+
+```haskell
+infinity :: Int
+infinity = infinity + 1
+```
+
+What is the result of 
+```haskell
+square (two infinity) ?
+```
+The calculation for this in a lazy setting is similar to before:
+
+```haskell
+LAZY
+	square (two infinity)
+=	{def square}
+	(two infinity) * (two infinity)
+= 	{def two}
+	2 * 2
+= 	{def '*'}
+	4
+```
+
+This terminates with an answer. However:
+
+```haskell
+EAGER
+	square (two infinity)
+= 	{def infinity}
+	square (two (infinity + 1))
+= 	{def infinity}
+	square (two ((infinity + 1) + 1))
+= 	...
+```
+
+CTRL - C to quit execution
+
+### The Church - Rosser Theorem
+
+This theorem tells us important facts about evaluation strategies:
+	1. If evaluation of a term terminates then normal evaluation will terminate.
+	2. If two evaluation strategies terminate for a term then they agree on the result.
+
+### Currying
+
+In Haskell it is possible to take functions as input, and to produce functions as output.
+
+Consider two functions expressing addition:
+
+```haskell
+add :: (Int, Int) -> Int
+add (x, y) = x + y
+
+plus :: Int -> (Int -> Int)
+plus x y = x + y
+```
+
+How does plus work? Consider plus 7
+
+```haskell
+plus 7 :: Int -> Int 
+plus 7 y = 7 + y
+```
+
+To use this, we might write:
+
+```haskell
+plus 7 3 
+	= 10
+```
+
+---
 
