@@ -12,11 +12,26 @@
 	* Evaluate to a true or false value - e.g. not "this statement is false"
 * A proposition *can* include free variables (predicate) and *can* be represented using a short-hand variable or function. In this case, free variables must be bound to arguments before evaluation
 * Single statements can be combined with **connectives** like:
-	* Not,			¬	Negation
-	* And,			&#8743	Conjunction
-	* Or, 			&#8744	(inclusive) Disjunction
-	* Xor, 			&#8855	(exclusive) Disjunction
-	* Implies, 		&#8658	Implication
-	* Is equivalent to, 	&#8660	Equivalence
+	* Not,			|¬		Negation
+	* And,			|&and		Conjunction
+	* Or, 			|&or		(inclusive) Disjunction
+	* Xor, 			|&otimes	(exclusive) Disjunction
+	* Implies, 		|&rArr		Implication
+	* Is equivalent to, 	|&equiv		Equivalence
 * Use a truth table to evaluate possible outcomes of a compound proposition
 
+* Axioms are the rules of Boolean algebra
+* There are many axioms denoting how expressinsare equivalent e.g.
+	* Identity
+	* Absorption
+	* Distribution
+
+* Use axioms to simplify expressions intelligently
+	* acknowledge repeating expressions
+* many different ways to compare boolean functions
+	* simplification/ mutation via axioms
+	* brute force enumeration (truth table)
+
+* Other conjunctions are universal/ functionally complete
+	* NAND = not and = <span>&#8892</span>
+	* NOR = not or = &barvee
