@@ -3,6 +3,7 @@
 ##### Lecture 1
 
 Functional Programming is about programming with values rather than statements. It encourages code that is:
+
 	* concise
 	* precise
 	* reasonable
