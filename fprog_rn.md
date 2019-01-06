@@ -319,11 +319,13 @@ For example, 'uncurry plus' behaves just like 'add'
 
 In mathematics we are used to writing with operations and manipulating them with respect to equations. For instance:
 
-	x + y = z
+
+x + y = z
+
 
 ==
 
-	x = z - y
+x = z - y
 
 This achieves two things:
 	1. we isolate x
@@ -333,27 +335,63 @@ We can use lambda abstraction to achieve something similar for the arguments to 
 
 How could we isolate f in the following?
 
-	f x = x<sup>2</sup>
+f x = x<sup>2</sup>
 
 We want to push x to the other side.
 
 We can proceed by introducing notation that represents the fact that the 'x' has been moved:
 
-	f x = x<sup>2</sup>
+f x = x<sup>2</sup>
 
 ==
 
-	f = (lambda) x -> x<sup>2</sup>
+f = (lambda) x -> x<sup>2</sup>
 
 We have introduced the notation "(lambda) x -> e" where x is the variable that appears somewhere in e.
 
 Some alternative notations might help to understand this:
 
-	(lambda) x -> x<sup>2</sup>
+(lambda) x -> x<sup>2</sup>
+
 could be written as
-	x |-> x<sup>2</sup>
+
+x |-> x<sup>2</sup>
+
 This says that x maps to x<sup>2</sup>
 
+In a computer we write (lambda) x -> e as \x -> e.
+
+The type of a lambda abstraction is determined by the type of the input and the type of the output.
+
+So if we know 
+
+	x :: a	and   e :: b
+
+then we know
+
+	\x -> e :: a -> b
+
+Conventionally in Haskell we omit brackets in functoin signatures. For instance instead of
+
+```haskell
+a -> (b -> (c -> (d -> e)))
+```
+
+we simply write 
+
+```haskell
+a -> b -> c -> d -> e
+```
+
+Note that this is not the same:
+
+```haskell
+(((a -> b) -> c) -> d) -> e
+```
+
+Here the brackets cannot be removed , as the first part is a single function.
+
+---
 
 
 	
