@@ -148,7 +148,7 @@ two :: Int -> Int
 two x = 2
 ```
 
-This returns 2 no matter the input. e.g. two 5 = 2, two |\_\ = 2
+This returns 2 no matter the input. e.g. two 5 = 2, two |\_ = 2
 
 ---
 
@@ -284,3 +284,76 @@ plus 7 3
 
 ---
 
+##### lecture 4
+
+Currying allows us to convert from fucntions that take pairs as input to functions that produce functoins as output. 
+
+For example, currying allows us to take a functoin like add, and produce a functoin like plus. this works for any function with the type:
+
+```haskell
+	(a,b) -> c
+```
+
+The function curry is defined as follows: 
+
+```haskell
+curry :: ((a,b) -> c) -> (a -> (b -> c))
+curry f x y = f(x,y)
+
+f :: (a,b) -> c
+x :: a
+y :: b
+f(x,y) :: c
+```
+
+For example, 'curry add' behaves just like 'plus'
+
+```haskell
+uncurry :: (a -> (b -> c)) -> ((a,b) -> c)
+uncurry f(x,y) = f x y
+```
+
+For example, 'uncurry plus' behaves just like 'add'
+
+### Lambda Abstraction
+
+In mathematics we are used to writing with operations and manipulating them with respect to equations. For instance:
+
+	x + y = z
+
+==
+
+	x = z - y
+
+This achieves two things:
+	1. we isolate x
+	2. we make use of '-' to negate the '+'
+
+We can use lambda abstraction to achieve something similar for the arguments to functions.
+
+How could we isolate f in the following?
+
+	f x = x<sup>2</sup>
+
+We want to push x to the other side.
+
+We can proceed by introducing notation that represents the fact that the 'x' has been moved:
+
+	f x = x<sup>2</sup>
+
+==
+
+	f = (lambda) x -> x<sup>2</sup>
+
+We have introduced the notation "(lambda) x -> e" where x is the variable that appears somewhere in e.
+
+Some alternative notations might help to understand this:
+
+	(lambda) x -> x<sup>2</sup>
+could be written as
+	x |-> x<sup>2</sup>
+This says that x maps to x<sup>2</sup>
+
+
+
+	
