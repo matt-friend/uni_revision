@@ -453,6 +453,87 @@
 
 ---
   
+## Securing data at rest
 
+####  Security
+* How can we secure a laptop/ server?
 
+* Confidentiality of data:	
+	* when not in use
+	* against anyone except authorised persons
+* Integrity of data
+	* detect if your file are modified when you are away
+* Availability of data
+	* if the CPU melts, can we recover the data?
+* If confidentiality is needed for a laptop (in the case of it being stolen) then all data must be encrypted.
+
+### Full disk encryption
+
+#### Linux
+* Many distros have full disk encryption as a standard setup option
+* Uses LUKS, Linux Unified Key Setup
+* Everything on the drive is encrypted except the boot data
+
+#### Windows
+* Bitlocker - need a password to unlock a drive
+* Used to only be in Windows Ultimate, now available
+* requires password AND key-on-chip (or backup)
+
+#### Macintosh
+* Filevault - password and key on disk
+* Recovery key can be printed out/ stored on cloud
+
+#### Full disk encryption
+* Hard to get wrong; nothing user accesible left unencrypted
+* easy to use; only user interaction is setup password
+BUT
+* performance penalty (slower)
+* all data available while machine running
+
+### File encryption
+
+#### File-level encryption
+* Problem: we need to have a decrypted file to work with
+* Not much use storing encrypted + unencrypted files next to each other
+	* **zero** security if disk stolen
+* Need software that can work with encrypted files
+
+* Office can encrypt individual files for added security
+* Early versions had password protection but offered poor or no encryption
+
+#### Encrypted filesytems
+**Veracrypt**
+* Used for encrypted volumes (files that work like extra drives) 
+* One file holds an encrypted container that can be mounted as a drive or folder
+
+##### Linux
+* ecryptFS - encrypted home directory - standard option in Ubuntu
+* encFS - mount/ unmount in arbitrary directory
+* Veracrypt
+
+#### Encrypted filesystems
+PROS
+* can link to particular user, or only unlock when needed
+	* e.g. only unlock when being worked on
+* faster than encrypting whole disk
+
+CONS
+* more config/ management (harder to work with)
+* can make mistakes easily e.g. copy file out of folder
+
+### University Policy
+* If *confidential data* is stored on a device **or** accessed from a device, the **whole device** must be encrypted (i.e full disk encryption), regardless of ownership
+* UoB confidential data should only be **stored** on UoB machines
+* Accessing data through ssh ensures no storage on remote machine
+
+#### Technical matters
+* Don't need public key encryption for data at rest
+* Symmetric encryption, usually AES
+* Need specific mode of operation to allow for random access to encrypted drive
+
+---
+
+## Securing data in transit
+
+### Taking data with you
 
