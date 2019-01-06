@@ -371,7 +371,7 @@ then we know
 
 	\x -> e :: a -> b
 
-Conventionally in Haskell we omit brackets in functoin signatures. For instance instead of
+Conventionally in Haskell we omit brackets in function signatures. For instance instead of
 
 ```haskell
 a -> (b -> (c -> (d -> e)))
@@ -393,5 +393,145 @@ Here the brackets cannot be removed , as the first part is a single function.
 
 ---
 
+##### lecture 5
 
-	
+### Lists
+
+A list in Haskell is an ordered sequence of elements that have the same type. For instance:
+
+```haskell
+[3, 1, 4, 1, 5, 9, 2] :: [Int]
+```
+
+Note that every element has the same type, in this case Int
+
+The followin gis not a list:
+
+```haskell
+[3, 'a', "hello", 4.2]
+```
+
+Each of the items have a different type. This is not allowed
+
+Lists in Haskell are calles 'homogenous' because the elements are all the same type.
+
+Every list is mad up of two things:
+
+```haskell
+[] <- an empty list of type [a]
+
+x : xs 
+
+x - this is a value of type a
+: - 'cons'
+xs - this is a list of type [a]
+```
+
+For example, the following holds true:
+
+```haskell
+[3, 1, 4]	= 3 : [1, 4]
+		= 3 : 1 : [4]
+		= 3 : 1 : 4 : []
+```
+
+We can define functions over lists in the usual way, by using pattern matching.
+
+When defining a functon over lists, it is often correct to start by considering the definition for the empty list first followed by the case for cons (:) :
+
+For example, the following function checks if a list is empty:
+
+```haskell
+isEmpty :: [a] -> Bool
+isEmpty [] = True
+isEmpty (x:xs) = False
+```
+
+The following is not correct for the nonempty case:
+
+```haskell
+isEmpty x : xs = False
+```
+
+if the 'x', ':' and 'xs' are separated by spaces they will be treated as separate parameters. Haskell will thinnk we are creating a function called isEmpty with **3** parameters. We use brackets to group the, into a single argument.
+
+Note that (:) is cons, x is a new variable we named of type a and xs is a new variable we named of type [a]. For example, consider the evaluation of this:
+
+```haskell
+	isEmpty [3, 1, 4]
+=	
+	isEmpty (3:[1, 4]) 	3	<- x
+=	{def isEmpty}		[1, 4] 	<- xs
+	False
+```
+
+Now consider the following function:
+
+```haskell
+isSingle :: [a] -> Bool
+isSingle [] = False
+isSingle [x] = True	*
+isSingle (x:xs) = False
+```
+An alternative definition would have the following instead of (\*)
+
+```haskell
+isSingle (x:[]) = True
+```
+
+These are equivalent because [x] == (x:[])
+
+Another alternative definition would be the following:
+
+```haskell
+isSingle :: [a] -> Bool
+isSingle [x] = True
+isSingle _ = False
+```
+
+This identifies the single case first and everything else is false.
+
+The function 'head' looks like this:
+
+```haskell
+head :: [a] -> a
+head [] = undefined
+head (x:xs) = x
+```
+
+This is a partial functoin because it is undefined for one of its cases. We try to avoid these functions becuase they cause bugs in our code.
+
+```haskell
+tail :: [a] -> a
+tail [] = undefined
+tail (x:xs) = xs
+```
+
+The length of a list is a recursive function:
+
+```haskell
+length :: [a] -> Int
+length [] = 0
+length (x:xs) = 1 + length xs
+```
+
+To understand this it is helpful to evaluate an example:
+
+```haskell
+	length [3, 9, 2]
+=	
+	length (3 : 9 : 2 : [])
+=	{def length}
+	1 + length (9 : 2 : [])
+=	{def length}
+	1 + (1 + length (2 : []))
+=	{def length}
+	1 + (1 + (1 + length []))
+=	{def length}
+	1 + (1 + (1 + 0))
+=	{def '+'}
+	3
+```
+
+---
+
