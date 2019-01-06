@@ -536,4 +536,92 @@ CONS
 ## Securing data in transit
 
 ### Taking data with you
+* File-level encryption is useful for data in transit
+	* simplest way to encrypt with a password is with an encrypted archive i.e with 7-Zip
+* Containers can be used - encrypt the whole drive
+
+### Data in transit
+
+#### How do I decrypt once I have arrived?
+* place a copy of the encryption software on the drive itself
+
+#### Were there confidential files on the stick before?
+* deleted files are easy to recover - quick format only removes the index
+* full format *may not help* on flash drives - don't take with you if held confidential data previously
+* If the data is worth more than a flash drive, you can afford a new one
+
+#### Are you doing 256-bit AES with an 8-bit password?
+* If so, may as well not encrypt at all
+* One option - password + long random string you keep on your person
+* **or** use public-key cryptography if the recipient understands it
+
+* If you ever have previously travelled with confidential data on a laptop and you are travelling with no need for that data, use a *freshly reinstalled* laptop, avoid any problems
+
+### Across the Internet
+
+#### Remote Desktop
+* Connect to a Uni computer wherever you are
+* Prevents files from being stored on your remote device
+* Can use Uni software
+* BUT can be slow
+
+#### The Cloud
+* Store files in the cloud
+* No local files on your person
+* BUT **not** encrypted (usually)
+* Do NOT use for confidential data
+* Exception - Uni-provided Google Drive; separate section from public cloud
+
+### Secure Tunnels
+
+#### Tunnels
+* Idea: create a "tunnel" from your computer to another (**end-to-end** security)
+* **confidentiality** - no-one else can read the content
+* **integrity** - no-one else can modify the content
+
+#### Alternative: point-to-point security
+* Bounce data through nodes
+* Each travel path between nodes is secure
+* Re-encrypted at each node
+* PRO: can hide some of the address info along the way
+* CON: each node can decrypt
+
+### Man-in-the-middle attack
+* A wants to communicate with B
+* M intercepts the traffic between A and B
+* M passes along the information so that A and B do not suspect anything
+* M can be:
+	* **passive**: just listens to data; observes; records
+	* **active**: modifies, deletes or inserts data
+
+### VPN
+* Software that creates a secure tunnel between your computer's ISP/ WAP and a server in a different location
+* No one on that path can read or modify the data
+* Websites viewing you will see your location as the location of the VPN
+* If the website you are visiting is https, a tunnel is created through the VPN; even the VPN cannot read your data
+
+### ssh
+* secure shell
+* log in to a linux/unix machine from another
+* ssh server setup is required on a computer you want to ssh to
+* when it is installed, a host key pair is created
+* use keys, disable passwords! - more secure
+
+### Chat
+* Whatsapp, messenger etc
+
+#### Point-to-point encryption
+* Messages go through the messaging app (server?)
+* If app manages keys, or both parties have TLS connection to server, not secure
+	* the app can (be ordered to) decrypt your messages
+
+#### End-to-end encryption
+* Much more secure
+* No way for app to read your messages
+	* You own the keys
+	* app only provides channel for messages
+* A communication channel is end-to-end is only the end points of the path can decrypt the data beiing communicated
+* Whatsapp, iMessage, Telegram use e2e 
+
+---
 
