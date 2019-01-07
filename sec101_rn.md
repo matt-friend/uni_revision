@@ -625,3 +625,130 @@ CONS
 
 ---
 
+## The Internet and how it works
+
+#### Web browsers
+* What happens when you type a website address into the address bar?
+
+### Internet Protocol (IP)
+
+#### The Internet (Internet Protocol Layer)
+* The internet is basically many devices connected to a network of routers
+* Data is sent in chunks (packets) through the network to the destination
+* Routers know where to send the packets because they have information headers containing the source and destination adresses, prefixing the data
+* Routers direct packets to other routers closer to the destination (fastest path)
+
+#### Security issues with paths
+* Data packets are directed dynamically to their destination by routers
+	* This means the routers decide in the moment where to send them
+	* The path is usually dependent on network traffic and to circumvent broken links etc
+* This can be a security issue:
+	* Anyone one a path can interfere with data traffic
+	* Routers can advertise their speed as faster than it actually is, encouraging more traffic that should'nt be there or trust that router
+
+#### Addresses - IPv4
+* Internet Protocol, version 4
+* 32-bit addresses e.g. 201.32.4.187
+* Gives ~2<sup>32</sup> addresses (~4.29 tr)
+* Already run out
+* Proposed solution: IPv6, 128-bit addresses
+
+### IP addresses and identification
+* Does an IP address identify an individual person/ computer?
+* For a server: usually
+	* main purpose 
+	* BUT ISP or router on the way can serve you anything they want
+* For a client: no
+	* IP addresses are distributed dynamically and are a shared resource
+* IP geofences (this service is not available in your country) can be navigated via use of VPNs 
+* **IP addresses do not authenticate anything**
+
+#### The Internet (Internet Protocol Layer)
+* gives no guarantee of where packets are going
+
+#### Security issues on the IP layer
+* Threats:
+	* packets and destinations can be redirected, spoofed, blocked
+	* people can spy on traffic
+* Who can do this?
+	* anyone on the internet - if they manage to get onto a packets path
+	* in particular, your ISP/ WAP
+
+### Transmission Control Protocol
+
+#### Network stack
+* TCP header 	TCP payload	TCP trailer
+	     	\|/           
+		 v
+* IP header	IP payload 	IP trailer
+		\|/
+		 v
+* link header	link payload 	link trailer
+
+#### The need for TCP
+* IP *tries* to get packets from A to B
+* Packets can get lost, suffer errors or take different paths and arrive in the wrong order
+* TCP over IP gets you **reliable** and **stream-based** communication
+
+#### TCP - sending
+* example: string aaabbbccc
+* TCP splits into packets: aaa bbb ccc
+* packets are given an order/ index so they can be reassembled at the destination
+* packets are sent off 
+
+#### TCP - receiving
+* TCP receives packets 
+* Packets may be in incorrect order
+* TCP labelled at origin so can be reassembled
+
+#### TCP - control
+* When packets reach their destination, an acknowledgement signal is sent back indicating that the end server/ device has has received it.
+* If a packet is sent, and no acknowledgment signal returns specifying that packet has arrived is returned, then the packet gets resent
+* Packet loss happens for a number of reasons including getting lost, errors or even interceptions
+
+#### TCP - checksum
+* To reduce errors in packet data (tampering, signal loss) checksums are appended to the packets.
+* If the receiver of the packet calculates the checksum of the packet data and it is different to the sent checksum, it drops the packet, assuming it is corrupt
+* In dropping the packet no ack signal is sent
+* Therefore TCP protocol is followed by the sender: no ack signal was received, so packet must be resent.
+* Only if the checksum is good will the receiver accept the packet
+
+#### TCP
+* TCP header contains:
+	* sequence no.
+	* checksum
+	* source / destination ports
+* IP header contains:
+	* source address
+	* dest address
+* IP payload contains TCP header, payload and trailer
+
+#### TCP - security issues
+* TCP is a protocol system meant to protect against random errors and failures.
+* It is not meant as a security system
+* It would be easy for an active attacker to be able to send data packets with forged checksums and payloads if they wanted to - obviously after they have established a way to connect and interfere with the network.
+* TCP **does not** provide CIA; it's not a security protocol
+
+### Domain Name System
+
+#### Domain name system
+* Computers use IP addresses to find each other
+137.222.0.38 -> www.bristol.ac.uk (v4)
+2a00:1450:4009:80a::2004 -> www.google.com (v6)
+* People find it hard to remember strings of random numbers - websites addresses are used instead
+* The first thing a browser does when given a name address is convert it to the numbered IP address
+* each section of a domain name separated by a '.' is in a tree hierarchy
+
+#### DNS
+* DNS has a directory for addresses and their IP addresses
+* DNS can redirect the browser to a different page (e.g. a WAP login page)
+
+#### Security issues with DNS
+* DNS was designed for a US military network of trusted participants - there is no security built in
+* DNS responses are not normally signed (no authentication)
+	* exists DNSSEC as extension for this
+* Your access point can spoof DNS responses (common for login redirect)
+* DNS cache posioning - returning a fake DNS response pointing to your own server, for a different domain
+
+---
+
