@@ -535,3 +535,327 @@ To understand this it is helpful to evaluate an example:
 
 ---
 
+##### lecture 6
+
+learning how to write programs involving IO ()
+
+---
+
+##### lecture 7
+
+The take function allows you to take a number of elements from a list.
+
+e.g.
+
+```haskell
+	take 3 [3, 1, 4, 5, 6]
+= 	[3, 1, 4]
+```
+
+```haskell
+take :: Int -> [a] -> [a]
+take n [] = []
+take n (x:xs) = x : take (n-1) xs
+```
+
+let's try this code:
+
+```haskell
+	take 3 [1, 2, 3, 4, 5]
+=	{def take}
+	1 : take 2 [2, 3, 4, 5]
+= 	{def take}
+	1 : 2 : take 1 [3, 4, 5]
+= 	{def take}
+	1 : 2 : 3 : take 0 [4, 5]
+= 	{def take}
+	1 : 2 : 3 : 4 : take -1 [5]
+= 	{def take}
+	1 : 2 : 3 : 4 : 5 : take -2 []
+= 	{def take}
+	1 : 2 : 3 : 4 : 5 : []
+=	[1, 2, 3, 4, 5]
+```
+
+This failes because we needed to return the empty list when x = 0. We fix this by adding a case for x = 0. Adding it at the end does not work; as it is a specific case of x it needs to be checked out first. The answer is therefore:
+
+```haskell
+take :: Int -> [a] -> [a]
+take 0 xs = []
+take n [] = []
+take n (x:xs) = x : take (x-1) xs
+```
+
+One thing to notice is that "xs" is not used in the first clause. We could instead write an underscore:
+
+```haskell
+take 0 _ = []   <- _ parameter needs no name
+```
+
+Also note that "xs" was used in two different clauses: that is not a problem because clauses are selected by pattern matching, and then variables are assigned independently.
+
+A related function is:
+
+```haskell
+drop :: Int -> [a] -> [a]
+```
+
+such that 
+	
+```haskell 
+	drop 2 [1, 2, 3, 4, 5]
+ =	[3, 4, 5]
+```
+
+"take" selects n objects from the start of the list; "drop" **removes** those same n objects from the list.
+
+It is defined by:
+
+```haskell
+drop :: Int -> [a] -> [a]
+drop 0 xs = xs
+drop n [] = []
+drop n (x:xs) = drop (n-1) xs
+```
+
+The filter functon will show us hwo to write a *pattern guard*. This allows us to do further checks when pattern matching.
+
+The filter function removes elements from a list that do not satisfy a certain predicate.
+
+Suppose we have
+
+```haskell
+even :: Int -> Bool
+```
+
+which returns True if given an even number.
+
+We might want to filter a list so that all the elements are even. e.g 
+
+```haskell
+filter even [3, 1, 4, 6, 7]
+
+filter :: (a -> Bool) -> [a] -> [a]
+filter f [] = []
+filter f (x:xs)
+	| f x = x : filter f xs
+	| otherwise = filter f xs
+```
+
+Pattern guards match from top to bottom and reduce to the first case that evalates to True.
+
+---
+
+##### lecture 8
+
+### Maps over lists
+
+Mapping a function over a list transforms each element in the list by that function.
+
+Example:
+
+```haskell
+	[1, 2, 3, 4, 5]
+
+	--> map square
+	
+	[1, 4, 9, 16, 25]
+```
+
+The square function works for an individual number, so it cannot work on a list. So we use 'map' to make a function that can:
+
+```haskell
+map :: (a -> b) -> [a] -> [b]
+map f [] = []
+map f (x:xs) = f x : map f xs
+```
+
+Example: 
+
+Remember the function 
+
+```haskell
+plus :: Int -> Int -> Int
+```
+
+We might want to add 4 to every number in a list:
+
+```haskell
+	map (plus 4) [3, 4, 5]
+=
+	map (plus 4) (3 : 4 : 5 : [])
+= 	{def map}
+	(plus 4 3) : map (plus 4) (4 : 5 : [])
+= 	{def plus}
+	7 : map (plus 4) (4 : 5 : [])
+= 	{def map}
+	7 : (plus 4 4) : map (plus 4) (5 : [])
+= 	{def plus}
+	7 : 8 : map (plus 4) (5 : [])
+= 	{def map}
+	7 : 8 : (plus 4 5) : map (plus 4) []
+= 	{def plus}
+	7 : 8 : 9 : map (plus 4) []
+= 	{def map}
+	7 : 8 : 9 : []
+= 	[7, 8, 9]
+```
+
+### List comprehensions
+
+A list comprehension is convenient notation for expressing lists.
+
+The numbers in a sequence are written as:
+
+```haskell
+[1..100]
+```
+
+This gives us all the values from 1 to 100.
+
+We can also have infinte lists:
+
+```haskell
+[1..]
+```
+
+This gives us all the Ints forever.
+
+We can define the natural numbers by;
+
+```haskell
+nats :: [Int]
+nats = [0..]
+```
+
+If we wanted a list of all squares, we could use a map:
+
+```
+squares :: [Int]
+squares = map square nats
+```
+
+With list comprehensions we can write:
+
+```haskell
+squares = [square x | x <- nats]
+```
+
+This is read: sqaures, a list of square x where x is from the list nats
+
+A double comprehension list, taking elements from two lists:
+
+```haskell
+	[(x, y) |  x <- xs, y <- ys]
+```
+
+Comprehensions can also be filtered by a predicate. Here is the list of all odd numbers, given 'odd :: Int -> bool':
+
+```haskell
+odds :: [Int]
+odds = [x | x <- nats, odd x]
+```
+
+---
+
+##### lecture 9
+
+### Folds
+
+Recursion is one of the most dangerous constructs in a programming language - programmers can use it to write programs that never terminate while doing no useful work. A fold is a way of ensuring termination while producing useful results.
+
+POWERFUL + DANGEROUS
+
+GOTO
+
+WHILE
+
+FOLD, FOR
+
+SAFE + PREDICTABLE
+
+We can fold a list to a final value by using the foldr function.
+
+```haskell
+	foldr (+) 0 [1, 2, 3, 4, 5]
+
+=	1 : 2 : 3 : 4 : 5 : []
+
+=	1 + 2 + 3 + 4 + 5 + 0
+```
+
+We define foldr as follows:
+
+```haskell
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f k [] = k
+foldr f k (x:xs) = f x (foldr f k xs)
+
+where 	f :: a -> b -> b
+	k :: b
+	(x:xs) :: [a]
+```
+
+Let's define the function that sums values:
+
+```haskell
+sum :: [Int] -> Int
+sum = foldr f k where
+	f :: Int -> Int -> Int
+	f x y = x + y
+
+	k :: Int
+	k = 0
+```
+
+This is the long version of this code:
+
+```haskell
+sum :: [Int] -> Int
+sum = foldr (+) 0
+```
+
+The pattern is similar for products:
+
+```haskell
+product :: [Int] -> Int
+product = foldr (*) 1
+```
+
+Now we try a definition for length:
+
+```haskell
+length :: [a] -> Int
+length [] = 0
+length (x:xs) = 1 + length xs
+```
+
+That used pattern matching and recursion. We can try to figure it out with foldr:
+
+```haskell
+length [] = 0	<-- this is a hint that k will be 0
+
+length (True : []) = 1
+	     ^--- we know f replaces : so this implies that f True 0 = 1
+
+length (False : True : []) = 2
+	      ^---- Same thing; f False 1 = 2
+```
+
+From this we can assume f _ x = x + 1. 
+
+So we can code length like this:
+
+```haskell
+length :: [a] -> Int
+length = foldr f k where
+	f :: a -> Int -> Int
+	f _ x = x + 1
+
+	k :: Int
+	k = 0
+```
+
+We can test this by evaluating:
+
+---
