@@ -752,3 +752,115 @@ CONS
 
 ---
 
+## Internet Security
+
+### ssh
+
+#### Login to remote computer
+* Many old ways, no security
+	* telnet, rlogin, rsh etc
+
+#### ssh - secure shell
+* log into a UNIX/ linux machine from another
+* scp - secure copy 
+	* copy a file to/from a remote unix machine to your own
+* windows has putty for ssh, winscp for copying
+
+#### ssh tunneling
+* protocols such as rsync or git can be tunnelled through ssh e.g using git clone for repo with ssh prefix
+* cs department has snowy for students/ staff to ssh into 
+* ssh mainly used for remote login/admin of web servers. 
+* ssh has other uses such as port forwarding and proxying
+
+#### ssh server setup
+* The server computer that you want to ssh to needs to be running the ssh server 
+* On server setup, a key pair (for the host) is generated
+* ssh is very popular and so makes for a popular target for attackers; make sure you have completed secure setup.
+* use keys, disable passwords!
+
+#### ssh protocol
+* The server signs the DH public parameter with its host key
+* The ssh traffic is encrypted and MACed for confidentiality and integrity
+
+#### ssh key authentication
+* How do you know if the remote is the real host?
+* Never connected before: display host key, ask user
+* Connected before, known key: it's fine
+* Connected before, changed key: angry warning
+	* User must manually delete key from file
+	* Often happens when server host reinstalls OS and has to change key
+
+#### ssh client authentication
+* ssh supports a number of protocols
+	* most common are public key and password
+* Public key more scecure - private key is never sent to server, unlike passwords
+
+### Forward Secrecy and ephemeral key exchange
+
+#### Forward secrecy
+* If both parties have long-term key pairs, why not to DH exchange with those?
+* Problem with long term keys:
+	* secret key may get leaked
+	* enables anyone to read past messages
+
+#### Ephemeral key exchange
+* Solution to long term key pairs: ephemeral key exchange
+* Create a new,*temporary* key pair for each session and do DH swap with that.
+* Delete eph key pairs as soon as exchange ends.
+
+#### Forward secrecy
+* Ann interactive session has forward secrecy if there is no chance of session contents being revealed through party compromise after it has ended.
+* The usual way to do this is to create an ephemeral key pair
+* The creation of new keys specifically for the session and deletion of the keys afterwards ensures this forward secrecy.
+
+#### Ephemeral key exchange
+* Why have long-term keys at all?
+* These are for authentication; parties sign the ephemeral keys with their long-term keys
+* Without siging the keys could be from anyone
+
+### TLS - the successor to SSL
+
+#### SSL/TLS timeline
+* All versions of SSL are broken and banned
+* TLS 1.0 is forbidden for credit card data as of July 16
+* TLS 1.1 is allowed "with reservations"
+* TLS 1.2 is current
+* TLS 1.3 is current as of last summer 18
+
+#### TLS layers
+* Record layer
+* Protocol layer
+
+#### TLS record layer
+* secure tunnel
+* confidential, authentic
+* Encrypted and MACed
+
+#### TLS cipher suites
+* Many variatoins; for TLS 1.2 using Open SSL 1.0.1f, 80 suites
+* e.g ECDHE-RSA-AES256-GCM-SHA384
+	* ECDHE - key exchange - elliptical curve diffie-hellman ephemeral
+	* RSA - signature - public key encryption
+	* AES256 - block cipher - Advanced Encryption Standard
+	* GCM - mode - galois counter mode
+	* SHA384 - hash - secure hash algorithm 384
+
+#### TLS certificates
+* Certificate Authority certificates are shipped witth your browser
+* These are root CA certificates
+* A chain of trust has to be established between the root and the site via an intermediate CA certificate
+
+### Encrypted e-mail
+* TLS protects identity of sender and receiver against eavesdroppers
+	* PGP -encryoted e-mail cannot hide the to/from fields
+* End-to-end encryption (PGP) is apropriate for those 'at risk'
+
+#### PGP
+* Biggest problem is usability
+* Partial validity/ web of trust
+* What if you lose device with key on it?
+* Encryption/ decryption requires secure client-side code execution; need correct software like outlook. Harder in web browser
+
+---
+
+
