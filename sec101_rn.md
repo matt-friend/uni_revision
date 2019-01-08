@@ -998,6 +998,118 @@ BUT
 * Everyone can be "on the network" with build-your-own software-defined radios
 * Techinical abilities to turn a phone into a spying device exist, but governemnt/ police right to do this is questionable
 
+---
+
+## Malware
+
+#### Advice
+Don't
+	* click on links
+	* open attachments in emails
+	* download files
+	* install programs
+	* visit insecure websites
+* (Within reason)
+
+#### Good or bad files - what are safe?
+* Many different file types can contain malware
+* **PDF**
+	* can contain both embedded JavaScript and malformed content that exploits the software showing it
+	* Adobe is doing what they can to secure Acrobat reader
+	* Try and keep software up to date, usually warns about malicious activity
+* **Office docs**
+	* Can contain macros
+	* Huge problem around Windows 95
+	* Window now has default secure setting, so macro problems have almost disappeared
+* By default, Windows does not show fie extensions
+* File icon comes from within file so executable can be made to look like text file
+
+#### Conclusion
+* Cannot trust anyonen or anything
+* Files can be made to look like files they are not
+* Many file types can contain malware
+* Almost impossible to be 100% secure
+* Its about lowering risk
+* Acceptable risk level depends on nature of files and people involved
+
+### Types of malware
+
+#### Virus
+* Malicious program that infects host files such as:
+	*  executables (programs)
+	*  office docs
+	*  other parts of the computer (e.g  boot sector)
+* example: Melissa (1999), word macro virus
+	* Infects word docs
+	* Uses scipting features to send itself to everyone in address book (assuming usage of outlook)
+	* estimated 1 in 5 computers infected
+
+#### Worm
+* Malicious program that can spread itself on a network
+* Can rely on certain programs to spread (e.g MS word) but does not infect them
+* example: SQL slammer 2003
+	* Bank of america ATM network shutdown within 15 mins
+	* general internet slowdown
+	* only affected unpatched machines
+
+#### Ransomware
+* software that encrypts a users files and demands payment in order to unlock them
+* usually requests cryptocurrency or other currency that is hard to trace
+* e.g. cryptolocker 2013-14
+	* 3-4 million dollar gains
+	* Just needs read/ write acces to files
+
+#### Scams
+* Presents a non-existent problem to user in order to extract money from them
+* e.g. browser shows Windows error, provides phone number to call for help
+* targeted at those people who are unfamiliar with computers
+
+#### Adware
+* software that injects or modifies adverts when you are browsing the web or playing a game
+* advertising is a very common way to make money on the internet these days
+* if a program manages to get a companies adverts on someones commputer they can earn money
+
+#### VLC
+* Original VLC was good media player, no malware installed
+* Search up now, many downloadable results
+* Most of them will not be original VLC, will contain malware
+
+#### Superfish
+* Adware hard to avoid if it comes pre-installed on your system
+* Superfish installed by lenovo onto some devices
+* Injected ads
+* Circumventes certificate checking TLS protocol
+
+#### Terminology
+* Classification between malware is mostly academic
+	* many attacks are combinatons of attack types
+	* trojan, virus, worm, etc
+* distinction between anti-malware and anti-virus mostly ploy; software that protects against only one type of attack is not much use
+
+### What can we do about malware?
+
+#### Rule \#1
+* Back up your data
+* Make at least 3 copies of everything important
+* If you get infected, have the ability to reinstall and restore everything from the ground up
+
+#### Rule \#2
+* Keep your software up to date
+* You will only be protected from modern attack methods if your software is as good as it can be
+* Often it is unpatched and out of date machines that get attacked.
+
+#### Rule \#3
+* Constant vigilance
+* Impossible to be 100% secure without distrusting everything you get sent (not much point)
+* BUT if something doesnt seem right, carefully investigate
+
+#### Recommendation
+* Use adblocker (uBlock origin)
+* Ads are a common infection vector, reducing exposure increases security
+* Often adblocking more effective at preventing succesful attacks than anti-malware software.
+
+---
+
 
 
 
