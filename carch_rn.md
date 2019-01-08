@@ -53,4 +53,44 @@
 	* X^ |--> X
 	* Representation of X maps to the value of X
 
+### Aside - properties of bit-sequences
+* bit literal can be interpreted two ways
+	* big-endian, last bit is most significant
+	* little-endian, last bit is least significant
+* Hamming weight is the sum of bits which are 1 in a bit-sequence
+* Hamming distance is the sum of positions where two m-bit sequences are different
+
+### Positional number systems
+* already use positional number systems
+* where x^ (an n length digit sequence) maps to +/- the sum of x<sub>i</sub>.b<sub>i</sub>
+* where each x<sub>i</sub>
+	* is one of *n* digits taken from the set X = {0,1,...,b-1}
+	* is weighted by some power of the base b
+
+* One Hex digit (base 16) can represent 4 bits
+
+* Left-shift of an *x* by *y* digits is equivalent to multiplication by *b*<sup>y</sup> 
+
+### **Z** (integers)
+* Problem - want to represent **Z** BUT:
+	* infinite set
+	* so far ignored issue of sign
+* Solution: In C, we get 
+	* unsigned char = 0 -> 2<sup>8</sup>-1
+	* unsigned int = 0 -> 2<sup>32</sup>-1
+	* char = -2<sup>7</sup> -> 2<sup>7</sup>-1
+	* int = -2<sup>31</sup> -> 2<sup>31</sup>-1
+
+* Unsigned Int can be represented with natural binary expression
+	* Sum of x<sub>i</sub> . 2<sup>i</sup>
+* Signed can use either sign-magnitude or twos complement:
+	* **sign-magnitude** - most significant bit is representative of sign 
+	* so -1<sup>x<sub>n-1</sub></sup> . sum of remaining x<sub>i</sub>.2<sup>i</sup>
+	* note two represntations of 0 -> +0, -0
+	* **two's complement** - most significant bit is weighted as x<sub>n-1</sub>.-2<sup>n-1</sup>
+	* the rest of the digits are summed as normal positive values
+
+### Bit arithmetic
+* Look at adder designs
+* Adder truth tables for half and full adders.
 
