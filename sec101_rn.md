@@ -837,7 +837,7 @@ CONS
 * Encrypted and MACed
 
 #### TLS cipher suites
-* Many variatoins; for TLS 1.2 using Open SSL 1.0.1f, 80 suites
+* Many variations; for TLS 1.2 using Open SSL 1.0.1f, 80 suites
 * e.g ECDHE-RSA-AES256-GCM-SHA384
 	* ECDHE - key exchange - elliptical curve diffie-hellman ephemeral
 	* RSA - signature - public key encryption
@@ -862,5 +862,142 @@ CONS
 * Encryption/ decryption requires secure client-side code execution; need correct software like outlook. Harder in web browser
 
 ---
+
+## Networks - routers, wireless, mobile
+
+### Routers
+* Connect multiple devices to the internet
+
+#### Threats
+* You visit a malicious website (Not routers fault)
+* Someone on the internet tries to access your machine
+* Someone tries to hack into your router
+* (If wireless router) someone else tries to join your network without your permission
+
+#### IP and NAT
+* Computers communicate using IP addresses
+BUT
+* IP addresses are running out (poor addressing methods)
+* You don't necessarily want every computer in the world to be able to communicate with yours.
+* Routers can split the network into two parts
+	* Computer/ device + router
+	* Router + internet
+* The router can then perform Network Address Translation (NAT).
+
+#### Consequences of NAT
+1. Ability to have several devices behind one NAT, which has only 1 external IP address
+2. Behind the NAT, devices can initiate outbound connections, but the rest of the world cannot initiate connectoins to you - the router would not know which device to forward to.
+	* You cannot, without extra set-up, host a server behind an NAT 
+3. If your router is secure, you are protected from a lot of incoming attacks
+	* The attacks cannot reach your computer.
+	* This means an NAT does some of the work of a firewall
+
+### Port forwarding
+
+#### Ports
+* On the TCP/ UDP layer, applications use **ports** to distinguish several applications running on the same machine that are sending and receiving data.
+* E.g. http uses port 80 (or 443 if using TSL)
+* To connect to another machine you need an IP address and a port number.
+
+#### Port forwarding
+* NAT is great until you want to be able to play video games online or chat with friends
+* One solution is to connect via a server:
+	* This is good for setting up a game (matchmaking) but uses up too much bandwith for actual play data.
+	* Would rather use peer-to-peer
+	* NAT prevents this
+* Solution 2: port forwarding
+	* Tell the NAT to always allow data through one port (hole in the NAT wall)
+	* Choose to expose one or more TCP/UDP ports on your machine to the internet
+	* Lets others connect to you
+	* Make sure software for using these ports is up to date
+
+#### Dynamic port forwarding
+* NAT is very secure, prevents all peer-to-peer
+* Port forwarding is less secure, but enables games/ chat
+* **UPnP** (universal Plug n Play) or dynamic port forwarding allows ports to be opened only when a game or application is running. (i.e. only when it is needed)
+* *However* UPnP is know for being unsecure; no authentication
+	* Malware can look for it on your machine and use it for its own purposes.
+
+#### NAT types
+* Open (type 1)- No NAT, or port forwarding
+* Moderate (type 2)- NAT, Dynamic port forwarding
+* Strict (type 3)- NAT, no port forwarding
+* If type addition between two people is more than 4, no chat available
+
+#### Advice
+* Keep PC/laptop behind NAT unless required.
+* Static port forwarding is probably safer than UPnP
+* As long as nothing on your machine is using the forwarded ports, risk is minimal
+
+### Wi-fi
+* When on wifi, threats can come from most places
+
+#### Threats
+* People on the internet try to access your machine
+* People on your network try to access your machine
+* When you connect to a malicious website (not routers fault)
+* If the router itself is malicious
+
+#### Malicious actors
+* If the wifi traffic is not encrypted, other users on the network can see it.
+* Lots of networks (esp. free ones) allow you access in return for tracking and using your data 
+* TLS prevents anyone from seeing the contents of your traffic or from taking over sessions, but does NOT hide the websites you are visiting.
+* For maximum security, use VPN
+
+### Wi-fi encryption
+
+#### Encryption
+* **Unencrypted** wifi (even if need to register) = NO security against other users
+* **Encrypted** wifi requires a password or key before you connect, not a landing page afterwards.
+	* coffee shops can do this (password on menu etc)
+	* BUT public access points (like The Cloud) cannot
+* **WEP** (wired equivalence privacy):
+	* same key for all devices (no protection against other users on network)
+	* rubbish encryption
+	* withdrawn officially 2004
+* WEP is broken
+* **WPA** (Wi-fi protected access)
+	* replaces WEP
+	* can use one password, or different user accounts
+	* derives a different key for each device
+	* also broken
+* Current standard is WPA2, with WPA3 coming
+* VPN still best security (if you trust it)
+
+### Mobile
+
+#### Security model
+* "Same as landline"
+* Government can see who you are talking to etc (everything)
+* Can track location by seeing what base stations you are connecting to
+
+#### Privacy
+* Every phone has an IMEI (International Mobile Equipment Identifier)
+* This lets networks detect and block stolen phones
+* Every SIM card has an IMSI (International Mobile Subscriber Identity)
+* For privacy reasons, base station assign a TMSI (temporary IMSI) when it connects
+* In theory, ensures privacy as TMSI does not identify a user
+	* In practice, base station can easily send signal requesting IMSI
+
+#### IMSI catchers
+* **IMSI catchers** or "stingrays" are mitm devices that simulate a base station
+* They can request an IMSI just like a base station
+* According to Sonwden, can be used to send a fake shutdown signal to phone in order to still be able to record
+
+#### Baseband processor
+* A **SIM** card has a microprocessor of its own
+* A phone typically has a baseband (co)processor to manage network traffic. Has own RAM and operating system
+	* Seems to be under complete control of network operator
+
+#### IMSI catchers
+* Enable interception and surveillance without a warrant
+* Enable mass surveillance
+
+#### Conclusion
+* Mobile phones (inc smartphones) do not offer any meaningful security against network threats.
+* Everyone can be "on the network" with build-your-own software-defined radios
+* Techinical abilities to turn a phone into a spying device exist, but governemnt/ police right to do this is questionable
+
+
 
 
