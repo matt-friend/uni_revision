@@ -41,3 +41,16 @@
 	* x and y = (x n y) n (x n y)
 	* x or y = (x n x) n (y n y)
 
+---
+
+## Week 2 - Integer representation and arithmetic
+* Decimal literals are just a sequence of digits
+* The same is true with other data items:
+	* a bit is a single binary digit
+	* a byte is an 8-element sequence of bits
+	* a word is a w-element of bits
+* Key concept
+	* X^ |--> X
+	* Representation of X maps to the value of X
+
+

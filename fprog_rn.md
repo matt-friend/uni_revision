@@ -859,3 +859,298 @@ length = foldr f k where
 We can test this by evaluating:
 
 ---
+
+##### lecture 10
+
+We will evaluate the result of sum [3, 1, 4]
+
+```haskell
+	sum [3, 1, 4]
+= 	
+	sum (3 : 1 : 4 : [])
+= 	{def sum}
+	foldr (+) 0 (3 : 1 : 4 : [])
+= 	{def foldr}
+	3 + (foldr (+) 0 (1 : 4 : [])
+= 	{def foldr}
+	3 + (1 + (foldr (+) 0 (4 : [])
+=	{def foldr}
+	3 + (1 + (4 + (foldr (+) 0 [])
+= 	{def foldr}
+	3 + (1 + (4 + 0)
+=	{def '+'}
+	8
+```
+
+### Newtypes, types and data
+
+There are three ways of introducing new types of data in Haskell
+
+#### Data
+
+Here we write:
+
+```haskell	
+data Maybe a = Just a | Nothing
+```
+
+This is shorthand for the following:
+
+```haskell
+data Maybe a where
+	Nothing :: Maybe a
+	Just a :: a -> Maybe a
+```
+
+This introduces the type 'Maybe a' for any 'a' as well as th constructors 'Just' and 'Nothing'. All constructors start with a capital letter, result in the type being defined and be pattern match upon.
+
+Another example:
+
+```haskell
+data Either a b = Left a | Right b
+```
+
+This can be translated as:
+
+```haskell
+data Either a b where
+	Left a :: a -> Either a b
+	Right b :: b -> Either a b
+```
+
+These are constructors, not functions, so there is no function body required
+
+#### Type Synonyms
+
+A type synonym introduces a name for an existing type.
+
+Instead of writing '[Maybe a]' we might want to write 'Maybes a' instead. To do this, we write:
+
+```haskell
+type Maybes a = [Maybe a]
+```
+
+This allows ypu to write 'Maybes a' instead of [Maybe a].
+
+#### Newtypes
+
+Units of measure sometimes share an underlying data representation, but should nevertheless be kept distinct. 
+
+For instance consider the number '5', depending on context, it may represent different things such as 5cm, 5in, 5kg etc.
+
+To introduce metres we do this:
+
+```haskell
+newtype Metre = Metre' Int
+```
+
+To understand this it may help to look at the longhand version:
+
+```haskell
+newtype Metre where
+	Metre' :: Int -> Metre   <-- this is not valid haskell
+```
+
+This introduces a new constructor called Metre', which takes an Int and makes a value of type Metre.
+
+---
+
+##### lecture 11
+
+### Type classes
+
+A type class provides a way to give functinos multiple meanings dependent on the type of the function.
+
+For example consider the function 'print' that prints values.
+
+```haskell
+	show True = "True"
+	show 5 = "5"
+	show (Just 3) = "Just 3"
+	show "hello" = "hello"
+```
+
+We might imagine that print has the following type:
+
+```haskell
+	print :: a -> string
+```
+
+This is not correct because there are some things that do not work for print, such as a function.
+
+We introduce the family of print functions by creating a new type class:
+
+```haskell
+class Show a where
+	show :: a -> String
+```
+
+This introduces the function 'print' with type:
+
+```haskell
+print :: Show a => a -> String
+```
+
+NB. Show a is not a parameter; => is not a function
+
+The above says that if 'a' is a member of the 'Show' type class then print has type a -> String.
+
+The class definition gives the types of its functions, but not their implementation. For that, we use an instance for each member of the family:
+
+If we want to be able to print Bool values then we write the following:
+
+```haskell
+insatnce Show Bool where
+	--show :: Bool -> String
+	show True = "True"
+	show False = "False"
+```
+
+This introduces 'print' that works for Bool values. In principle we must define an instance for every type of interest.
+
+Haskell has 'Show' in-built, and can derive definitions automatically for some datatypes if you ask it to.
+
+To do this we write:
+
+```haskell
+data Day = Mon |Tue |Wed |Thur |Fri |Sat |Sun
+	deriving Show
+```
+
+This tells Haskell to make the appropriate instance of Show for us.
+
+### Equality
+
+Values can often be checked for equality. Not all things can be checked for equality.
+
+For this we use the symbol'=='.
+
+```haskell
+	5 == 3 	= False
+	5 == 5	= True
+```
+
+However, 5 == True is not well-typed; comparing a number to a boolean is nonsense.
+
+To introduce ==, we use a type class:
+
+```haskell
+class Eq a where
+	(==) :: a -> a -> Bool
+```
+
+As before this introduces a function:
+
+```haskell
+(==) :: Eq a => a -> a -> Bool
+```
+
+Just as with Show, this can be derived. To derive both, use this line:
+
+```haskell
+...
+	deriving (Show, Eq)
+```
+
+### Monoids
+
+A monoid is an operation '**o**' together with a neutral element '**e**' such that the following laws hold true:
+
+* associativity: (x **o** y) **o** z = x **o** (y **o** z)
+* left unit: **e** **o** y = y
+* right unit: y **o** **e** = y
+
+Formally, a monoid is a triple \<x, **o**, **e**\> where **o**: x -> x -> x and **e**: x satisfying these laws.
+
+Examples:
+
+\<**N**, +, 0\> - addition
+\<**N**, \*, 1\> - multiplication
+
+---
+
+##### lecture 12
+
+A monoid consists of 3 things:
+
+* a set **m**
+* an operation **o** : m -> m -> m
+* a member of set **m**, **e**: m
+
+Here is a table of a few monoids:
+
+**m** | **o** | **e** | name
+--- | --- | --- | ---
+**N** | + | 0 | addition
+**N** | x | 1 | multiplication
+Bool | v | False | or
+Bool | ^ | True | and
+Matrix | X | id | matrix mult.
+[a] | ++ | [] | lists
+
+Since there are so many monoids we can capture this common pattern in a type class.
+
+```haskell
+class Monoid n where
+	mempty :: m			-- neutral element
+	mappend :: m -> m -> m		-- operation
+```
+
+We consider an instance of this class to be valid when the three monoid laws hold true.:
+
+1. mappend x (mappend y z) = mappend (mappend x y) z
+2. mappend mempty x = x
+3. mappend y mempty = y
+
+For example, we can write an instance where m = Int for addition:
+
+```haskell
+instance Monoid Int where
+	--mempty :: Int
+	mempty = 0
+
+	--mappend = Int -> Int -> Int
+	mappend = (+)
+```
+
+The problem with this is that now we have locked ourselves in to making (+) the monoidal operation for Int, but (\*) would also have been valid.
+
+We can resolve this by using a newtype for each conflicting monoid.
+
+To do sum properly:
+
+```haskell
+newtype Sum = Sum Int
+
+instance Monoid Sum where
+	--mempty :: Sum
+	mempty = Sum 0
+	--mappend :: Sum -> Sum -> Sum
+	mappend (Sum x) (Sum y) = Sum (x+y)
+
+where x and y are Ints
+```
+
+Suppose we have a list of monoidal values, and we want to collapse it:
+
+```haskell
+	[Sum 3, Sum 2, Sum 1] :: [Sum]
+		|
+		v
+	Sum 3 o Sum 2 o Sum 1 o e
+```
+
+To achieve this, we could use a foldr:
+
+```haskell
+fold :: Monoid m => [m] -> m
+fold = foldr mappend mempty
+```
+
+---
+
+##### lecture 13
+
+
+
+
