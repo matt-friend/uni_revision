@@ -1270,3 +1270,139 @@ mapBush f (Node l x r) = Node (mapBush f l) (f x) (mapBush f r)
 ##### lecture 14
 
 ### Functors
+
+The different maps are all very similar:
+
+```haskell
+map :: (a -> b) -> [a] -> [b]
+mapMaybe :: (a -> b) -> (Maybe a) -> (Maybe b)
+mapTree :: (a -> b) -> (Tree a) -> (Tree b)
+mapBush :: (a -> b) -> (Bush a) -> (Bush b)
+```
+
+The generalisation of data structures like [], Maybe, Tree and Bush is called a Functor.
+
+We use a type class to generalise:
+
+```haskell
+class Functor f where
+	fmap :: (a -> b) -> (f a) -> (f b)
+```
+
+Note that the f here is not a function, it is a variable that represents a type. For example f can be [], Maybe, Tree etc.
+
+A valid instance of the Functor type class must obey the functor laws:
+
+1. fmap id = id <- **identity law**
+2. fmap g . fmap f = fmap (g.f) - **composition law**
+
+These laws make use of the function fmap that we are defining, as well as the functions id and (.).
+
+They are already defined as :
+
+```haskell
+id :: a -> a
+id x = x
+```
+
+This function does nothing to its input.
+
+```haskell
+(.) :: (b -> c) -> (a -> b) -> (a -> c)
+(g.f) x = g (f x)
+```
+
+### Structural Induction
+
+We prove statements by using induction. This means we first prove the statement for the empty base case. Then we prove it for the recursive case, assuming that it is true for the smaller cases.
+
+For lists, we have:
+
+```haskell
+instance Functor [] where
+	--fmap :: (a -> b) -> (f a) -> (f b)
+	fmap = map
+```
+
+The longer version defines fmap from scratch:
+
+```haskell
+instance Functor [] where 
+	--fmap :: (a -> b) -> [a] -> [b]
+	fmap f [] = []
+	fmap f (x:xs) = f x : fmap f xs
+```
+
+We want to prove that the functor laws hold true for this instance.
+
+First, we show that 'fmap id = id'.
+
+We prove this by induction on lists. First the base case, which is the empty list.
+
+```haskell
+	fmap id [] = id []
+```
+
+Proof:
+
+```haskell
+	fmap id []	|	id []
+=	{def fmap}	|=	{def id}
+	[] 		|	[]
+```
+
+Now the inductive case:
+
+Assume that fmap id xs = id xs
+
+fmap id (x :xs) = id (x:xs)
+
+Proof:
+
+```haskell
+	fmap id (x:xs)
+=	{def fmap}
+	id x : fmap id xs
+=	{def id}
+	x : fmap id xs
+=	{def induction hypothesis}
+	x : id xs
+=	{def id}
+	x : xs
+= 	{def id}
+	id (x:xs)
+```
+
+We do the same with composition.
+
+Base case: []
+
+(fmap g . fmap f)[] = fmap (g.f) []
+
+Proof:
+
+```haskell
+	(fmap g . fmap f)[]	|	fmap (g.f) []
+=	{def '.'}		|=	{def fmap}
+	fmap g (fmap f [])	|	[]
+=	{def fmap}		|
+	fmap g []		|
+=	{def fmap}		|
+	[]			|
+```
+
+Inductive case: Assume (fmap g . fmap f) xs = fmap (g.f) xs
+
+We must prove that (fmap g . fmap f) (x:xs) = fmap (g.f) (x:xs)
+
+```haskell
+	(fmap g . fmap f) (x:xs)
+=	{def '.'}
+	fmap g (fmap f (x:xs))
+=	{def fmap}
+	fmap g (f x : fmap f xs)
+=	{def fmap}
+	g (f x) : fmap g (fmap f xs)
+
+---
+
