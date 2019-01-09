@@ -1151,6 +1151,122 @@ fold = foldr mappend mempty
 
 ##### lecture 13
 
+### Data Structures
 
+One of the most basic structures is the Maybe data type. It was defined as follows:
 
+```haskell
+data Maybe a = Just a | Nothing
+```
 
+This introduces the constructors:
+
+```haskell
+	Nothing :: Maybe a
+	Just :: a -> Maybe a
+```
+
+One thing we can do is transform the contents of a 'Maybe a' so that values of type 'a' become type 'b' instead. This would make a value of type 'Maybe b'
+
+```haskell
+mapMaybe :: (a -> b) -> (Maybe a) -> (Maybe b)
+mapMaybe f Nothing = Nothing
+mapMaybe f (Just x) = Just (f x)
+```
+#### Trees
+
+A slightly more complex structure is a 'Tree'. A tree i smade up of Node and Leaf values:
+
+```haskell
+Fork	-> 	Fork	->	Leaf	->	a
+			->	Fork	->	Leaf	->	a
+					->	Leaf	->	a
+	->	Leaf	-> 	a
+```
+
+Notice only a leaf can point to a value of type 'a'
+
+We can define a Tree in Haskell as follows:
+
+```haskell
+data Tree a = Leaf a | Fork (Tree a) (Tree a)
+```
+
+This creates two constructors that we can pattern match onto in the usual way.
+
+```haskell
+Leaf :: a -> Tree a
+Fork ::(Tree a) -> (Tree a) -> (Tree a)
+```
+
+Here are some values that construct trees:
+
+```haskell
+Leaf True :: Tree Bool
+Leaf 4 :: Tree Int
+Fork (Leaf True) (Leaf False) :: Tree Bool
+```
+
+However, this is not allowed:
+
+```haskell
+Fork (Leaf True) (Leaf 5) :: Not allowes!
+```
+
+We cannot have a Tree like this because the subtrees have different types - they must always be the same.
+
+We can have more interesting Tree types; for instance consider:
+
+```haskell
+Tree (Maybe Int)
+```
+
+For instance we can have:
+
+```haskell
+Leaf Nothing :: Tree (Maybe a)
+Leaf (Just 3) :: Tree (Maybe Int)
+Fork (Leaf Nothing) (Leaf (Just 7)) :: Tree (Maybe Int)
+```
+
+We can convert between trees in the same way as lists or maybes:
+
+```haskell
+mapTree :: (a ->b) -> Tree a -> Tree b
+mapTree f (Leaf x) = Leaf (f x)
+mapTree f (Fork l r) = Fork (mapTree f l) (mapTree f r)
+```
+
+A similar structure is a Bush: The idea here is that values are all in the nodes, and there are no leaves.
+
+```haskell
+data Bush a = Node (Bush a) a (Bush a) | Tip
+```
+
+Here are some values that use this structure:
+
+```haskell
+Tip :: Bush a
+Node Tip 6 Tip :: Bush Int
+```
+
+We have created the following constructors
+
+```haskell
+Tip :: Bush a
+Node :: (Bush a) -> a -> (Bush a) -> (Bush a)
+```
+
+Just as before, we can map over the contents of a Bush:
+
+```haskell
+mapBush :: (a -> b) -> (Bush a) -> (Bush b)
+mapBush f Tip = Tip
+mapBush f (Node l x r) = Node (mapBush f l) (f x) (mapBush f r)
+```
+
+---
+
+##### lecture 14
+
+### Functors
