@@ -1110,6 +1110,78 @@ Don't
 
 ---
 
+## Phishing
 
+#### Principle
+* Go for the weakest point in a system when attacking
+* This is often a person
+
+### Examples
+
+#### An e-mail
+* May be an email telling the user to click on a link to complete an account-related action
+* Email will pretend to be a known figure/ organisation of authority
+* How to recognise:
+	* sender address will not be from the organisation/ authority being imitated
+	* clickable links will be to strange site address (hover to check)
+
+#### Phishing
+* In these email cases the links can be modified so that hovering to show the address also shows a fake address
+* The landing pages will try to imitate the actual sign-in page of the true site
+	* Often very hard to distinguish from real site
+
+### Defences
+
+#### Phishing
+* **Phishing**: tricking people into handing over confidential info (usually username/ password)
+* **Spear phishing**: Tailoring phishing attacks to target a particular person
+* **Whaling**: Going after influential/ powerful members of a company such as CEO or other executives/ VIPs
+
+#### Phishing sites
+* Usually short-lived (few days until taken down)
+* Can be profitable if attracts enough victims before taken down
+* Often hosted:
+	* on legitimate sites, by hacking into site
+	* on self-hosting/ cloud providers
+	* on domains bought with stolen cards
+
+#### Safe browsing
+* Google service integrated into Chrome and Firefox
+* Checks url against downloaded blacklist (on own machine) - regularly updated
+
+#### Not a good idea
+* DO NOT assume you can type in your actual password and fake site will not know what to do with it
+* Often phishing sites are **man-in-the-middle** attacks, will send data through to actual site to check if credentials are correct
+
+#### A good idea?
+* If a site looks 'dodgy' then avoid it
+* BUT many phishing sites will look authentic
+* Good ones will look exactly the same.
+
+#### General advice
+* If an emaiil has a link to a site where you have an account, go to site via browser
+* If email is true, site will tell you if there is action to be taken
+* HOWEVER many legitimate business use links in emails to reset passwords
+
+* Never use a PIN number online - never needed for online transactions.
+* Never give out password/ letters of password over the phone (unless service actually uses this)
+
+### Psychology of phishing
+
+#### Why does it work?
+* People are generally taught to be kind and hekpful - this can be easy to exploit
+* Employees often want to do their job well, and so will avoid going through correct security protocol to help someone
+* People follow "common practice" not theory
+
+#### Marketing, deception, pretexting
+* **Marketing**: convincing people to do/ think things, spreading selective truths etc
+* **Deception**: spreading of untrue information
+* **Pretexting**: giving a reason to justify something when it is not the real reason.
+
+#### Demographics
+* Some groups of peeple ar emore likely to fall for scams than others
+* Obviously those with less computing experience
+* People who are 'agreeable' - more likely to do things for others
+* Nigerian Prince scams - filter out people who are unlikely to complete whole scam process
 
 
