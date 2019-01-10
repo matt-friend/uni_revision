@@ -1403,6 +1403,441 @@ We must prove that (fmap g . fmap f) (x:xs) = fmap (g.f) (x:xs)
 	fmap g (f x : fmap f xs)
 =	{def fmap}
 	g (f x) : fmap g (fmap f xs)
+```
 
 ---
+
+##### lecture 15
+
+---
+
+##### lecture 16
+
+### Indexed Trees
+
+It is possible to extract indexed elements from a list. This is written (!!) which we call "bang bang" or "shriek shriek".
+
+```haskell
+(!!) :: [a] -> Int -> a
+(x:xs) !! 0 = x
+(x:xs) !! n = xs !! (n-1)
+_ !! _ = error "Foolish human"
+```
+
+Intuitively, this function takes about n steps to find an element, where n is the length of the list.
+
+We will try to resolve this by defining a tree that stores information about how many elements it contains.
+
+```haskell
+4	->	2	->	'a'
+			->	'b'
+	->	2	->	'c'
+			->	'd'
+```
+
+To define this structure, we want something that contains leaves of arbitrary type but whose node ar eintegers that carry the nnumber of elements in subtrees.
+
+```haskell
+data ITree a = ILeaf a | INode Int (ITree a) (ITree a)
+```
+
+To get an intuition for how this corresponds to lists, we will define a function that flattens a tree.
+
+For instance, flattening the tree above produces the list ['a','b','c','d'].
+
+```haskell
+flatten :: ITree a -> [a]
+flatten (ILeaf x) = x
+flatten (INode ix l r) = flatten l ++ flatten r
+
+Need to use (++) , not (:), as flatten l may produce >1 item
+```
+
+As a side note, we have no way of creating an 'ITree a' that contains no values of type 'a'. In other words, we cannot flatten an empty list. We could easily add a constructor to do this for us.
+
+To make an 'ITree a', we define 'mkITree':
+
+```haskell
+mkITree :: [a] -> ITree a
+mkITree [] = error "Foolish human"
+mkITree [x] = ILeaf x
+mkITree xs = INode ix l r
+	where 
+	ix = length xs
+	l = mkITree (take (ix `div` 2) xs)
+	r = mkITree (drop (ix `div` 2) xs)
+```
+
+We can improve this code to avoid take and drop by using the splitAt function:
+
+```haskell
+mkITree xs = INode ix l r
+	where
+	ix = length xs
+	(ys, zs) = splitAt (ix `div` 2) xs
+	l = mkITree ys
+	r = mkITree zs
+```
+
+This uses the splitAt function defined in the Prelude as:
+
+```haskell
+splitAt :: [a] -> Int -> ([a],[a])
+splitAt xs 0 = ([], xs)
+splitAt (x:xs) n = (x : ys, zs)
+	where
+	(ys, zs) = splitAt xs (n-1)
+```
+
+---
+
+##### lecture 17
+
+We are ready to retrieve elements from the tree that we have constructed.
+
+First we start with a specification:
+
+```haskell
+retrieve :: ITree a -> Int -> a
+retrieve t n = flatten t !! n
+```
+
+This is a good specification because we are defining behaviour in terms of known functions on another well-behaved datatype.
+
+For a better implementation, first we pattern match:
+
+```haskell
+retrieve :: ITree a -> Int -> a
+retrieve (ILeaf x) 0 = x
+retrieve (INode ix l r) 0 
+	= case l of
+		ILeaf x -> x
+		INode ixl ll lr -> retrieve ll 0
+retrieve (INode ix l r) n
+	= case l of
+		ILeaf x -> retrieve r (n-1)
+		INode ixl ll lr -> 
+			if n < ixl then retrieve l n
+			else retrieve r (n - ixl)
+```
+
+```haskell
+7	->	3	->	'g'
+			->	2	->	'f'
+					->	'e'
+	->	4	->	2	->	'd'
+					->	'c'
+			->	2	->	'b'
+					->	'a'
+```
+
+Finding element 6 should retrieve 'g'.
+
+When we look at this tree, we see that the left tree has 4 elements in it, and since 4 <= 6 we must search in the right tree with index 6-4 = 2.
+
+The case statements in the code were there because the information we needed was not available immediately in a node. It would have been better to store the information about the length of the tree on the left.
+
+A good exercise is to come up with a better structure that stores the index information that we need directly.
+
+### Folding data structures
+
+The foldr function was useful to allow us to define many functions on lists. It is also possible to define a fold for any algebraic data structure ie sums/ products.
+
+To achieve this we first have to understand how we might have derived the foldr function.
+
+A foldr function is defined as follows:
+
+```haskell
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f k [] = k
+foldr f k (x:xs) = f x (foldr f k xs)
+```
+
+To generalise:
+
+```haskell
+foldr :: (a -> b -> b) -> b -> [a] ->  b
+
+	(a -> b -> b) replaces (:) (called cons)
+	b is for the [] (empty list)
+foldr cons empty [] = empty
+foldr cons empty (x:xs) = cons x (foldr cons empty xs)
+```
+
+N.B It is easy to confuse 'cons' and 'empty' with (:) and []. This is not the case. They are parameters that know how to deal with these constructors.
+
+Notice the types too:
+
+```haskell
+	[] :: [a]	|	(:) :: a -> [a] -> [a]
+	empty :: b`	|	cons :: (a -> b -> b)
+```
+
+The pattern here is that any constructor that has '[a]' becomes the corresponding function where this is now 'b'.
+
+So now consider the type for a 'Tree a':
+
+```haskell
+data Tree a = Leaf a | Fork (Tree a) (Tree a)
+``
+
+This has defined two constructors, 'Leaf' and 'Fork', with the following types:
+
+```haskell
+Leaf :: a -> Tree a
+Fork :: Tree a -> Tree a -> Tree a
+
+leaf :: a -> b
+fork :: b -> b ->. b
+```
+
+We decided to create 'leaf' and 'fork' by mirroring and adapting 'Leaf' and 'Fork'. These will be the parameters to our fold:
+
+```haskell
+foldTree :: (a -> b) -> (b -> b -> b) -> Tree a -> b
+foldTree leaf fork (Leaf x) = leaf x
+foldTree leaf fork (Fork l r) = fork (foldTree leaf fork l) (foldTree leaf fork r)
+```
+
+---
+
+##### lecture 18
+
+implementing 'ATree a'
+
+---
+
+##### lecture 19
+
+To use the 'foldTree' function, we do much the same as when using 'foldr'.
+
+For example, suppose we have a tree full of numbers that we want to sum.
+
+```haskell
+Fork 	->	3
+	->	Fork	->	2
+			-> 	1
+```
+
+This tree is represented by the following value:
+
+Fork (Fork (Leaf 1) (Leaf 2)) (Leaf 3)
+
+To sum the values in this tree, we implement the 'sumTree' function:
+
+```haskell
+sumTree :: Tree Int -> Int
+sumTree = foldTree leaf fork
+	where
+	leaf :: Int -> Int
+	leaf x = x
+	
+	fork :: Int -> Int -> Int
+	fork l r = l + r
+```
+
+Let's look at how this works by executing on a simple example:
+
+```haskell
+	sumTree (Fork (Fork (Leaf 1) (Leaf 2)) (Leaf 3))
+=	{def sumTree}
+	foldTree leaf fork (Fork (Fork (Leaf 1) (Leaf 2)) (Leaf 3))
+=	{def foldTree}
+	fork (foldTree leaf fork (Fork (Leaf 1) (Leaf 2))) (foldTree leaf fork (Leaf 3))
+=	{def foldTree}
+	fork (fork (foldTree leaf fork (Leaf 1)) (foldTree leaf fork (Leaf 2))) (foldTree leaf fork (Leaf 3))
+=	{def foldTree}
+	fork (fork (1) (2)) (foldTree leaf fork (Leaf 3))
+=	{def fork}
+	fork (1 + 2) (foldTree leaf fork (Leaf 3))
+=	{def '+'}
+	fork (3) (foldTree leaf fork (Leaf 3))
+=	{def foldTree}
+	fork (3) (3)
+=	{def fork}
+	3 + 3
+= 	{def '+'}
+	6
+```
+
+We can demonstrate 'foldTree' by taking the size of a tree, which is the number of values it contains:
+
+```haskell
+sizeTree :: Tree a -> Int
+sizeTree = foldTree leaf fork
+	where
+	leaf :: a -> Int
+	leaf x = 1
+
+	fork :: Int -> Int -> Int
+	fork x y = x + y
+```
+
+As a final example, let's look at the height:
+
+```haskell
+heightTree :: Tree a -> Int
+heightTree = foldTree leaf fork
+	where
+	leaf :: a -> Int
+	leaf x = 1
+	
+	fork :: Int -> Int -> Int
+	fork x y = 1 + x `max` y
+```
+
+The key point to note is that by using the 'foldTree' function, we did not have to concern ourselves with all the repetitive structure of the code that does recursion.
+
+### Lookup Maps
+
+A very useful data structure is 'Map k v', which acts like a dictionary or an address book that gives values of type 'v' when keys of type 'k' are supplied. 
+
+In essence we have the following:
+
+```haskell
+	Map k v  ~=  k -> v
+```
+
+This says that maps and functions are interchangeable.
+
+The constructors to a map remain abstract: they cannot be accesssed directly.
+
+Abstract data types like this are useful for many reasons. For instance, keeping a type abstract allows programmers to offer different underlying implementations at different poiints in time without end-users realising.
+
+We can import the 'Map' datatype by importing the module:
+
+```haskell
+import Data Map
+```
+
+This imports all the functionality of maps from an external module called 'Data.Map'.
+
+This imports many functions, including 'lookup':
+
+```haskell
+	lookup :: Map k v -> k -> Maybe v
+```
+
+The problem is that 'lookup' is a different function that is imported by the Prelude by default:
+
+```haskell
+	lookup :: [(a,b)] -> a -> Maybe b
+```
+
+We need a way to distinguish which one we mean.
+
+---
+
+##### lecture 20
+
+We can import the lookup function from Map explicitly only when it is prefixed with a symbol we choose:
+
+```haskell
+import qualified Data.Map as M
+
+qualified -> I want explicit names
+Data.map -> the map library
+M -> the chosen prefix
+```
+
+This qualified import allows us to refer to the 'lookup' function from 'Data.Map' by writing
+
+```haskell
+M.lookup
+```
+
+The other technique is to hide the version of 'lookup' from the Prelude:
+
+```haskell
+import Prelude hiding (lookup)
+```
+
+The most basic map is given by:
+
+```haskell
+empty :: Map k v
+```
+
+This is the map that contains no entries.
+
+We also have a way of inserting elements in a map:
+
+```haskell
+insert :: Ord k => k -> v -> Map k v -> Map k v
+```
+
+The result of 'insert k v m' is to insert the value v at key k in m.
+
+For example:
+
+```haskell
+insert "Joe" 8 empty :: Map String Int
+```
+
+This contains a key called "Joe" that maps to the value 8. If "Joe" is already in the map, then the previous value is completely overwritten.
+
+The 'lookup' function fetches values from a map. The result of 'lookup k m' is 'Nothing' if 'k' is not in the map 'm'. Otherwise the result is 'Just v' where 'v' is the value associated to 'k'.
+
+For example
+
+```haskell
+lookup k empty = Nothing
+lookup k (insert k v m) = Just v
+```
+
+### Trie maps
+
+A trie is a kind of tree that incorporates the behaviour of a map, where the keys are in fact a list of elements
+
+For example, here is a 'Trie Char Int':
+
+```haskell
+\0 'N'-> \0 'i'-> \0 'c'-> 4 'k'-> 3
+		             'o'-> 6 'l'-> 5 'e'-> 3
+					     'a'-> 15 's'-> 1
+```
+
+\0 represents 'Nothing' whereas 0 represents 'Just 0'.
+
+Char represents the edge type, and Int the node type.
+
+A value of 'Nothin' means there is no entry that corresponds to th key, and a value of 'Just 0' means nobody has that name.
+
+A 'Trie k v is implemented as follows:
+
+```haskell
+data Trie k v = Trie (Maybe v) (Map k (Trie k v))
+
+Maybe v = nodes: this corresponds to the values at each node e.g \0 or '0' or '5'
+Map k (Trie k v) = edges: this corresponds to the link from the current node to more tries.
+```
+To understand this, consider this trie:
+
+```haskell
+5	'a'-> 	t1
+	'v'->	t2
+	'q'->	t3
+```
+
+This corresponds to:
+
+```haskell
+	Trie (Just 5) m
+where m is the map
+	'a' |--> t1
+	'v' |--> t2
+	'q' |--> t3
+```
+
+---
+
+##### lecture 21
+
+We write a concordance using Trie structures
+
+---
+
+			     	 
+	
+
 
