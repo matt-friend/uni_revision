@@ -94,3 +94,69 @@
 * Look at adder designs
 * Adder truth tables for half and full adders.
 
+---
+
+### Physics of transistors
+* atom buuilt from nucleus and shells of electrons
+* when electrons excited with enough energy, can move between shells or to another atom
+* electrical current is flow of electrons
+* silicon used because abundant and cheap, inert, and can be doped
+	* doped with boron/ aluminium for more holes
+	* doped with phosphorus/ arsenic for more electrons
+* results in semiconductor
+	* P-type has extra holes
+	* N-type has extra electrons
+	* If sandwiched together, electrons can **only** move from N -> P
+
+### Switches and transistors
+* FET transistors allow charge to flow between drain and source, channel between is controlled by gate.
+* Channel width (so conductivity) controlled by P.D applied to gate
+* In a MOSFET transistor, the channel is *induced* 
+
+#### N-MOSFET
+* N-type MOSFET 
+* N-type terminals, P-type body
+* Applying P.D to gate **widens** channel, source + drain connected
+* Removing P.D to gate narrows channel, source + drain not connected
+```
+	d
+	|
+     |---
+g --||
+     |---
+	|
+	s
+```
+* g = gate
+* d = drain
+* s = source
+
+#### P-MOSFET
+* P-type MOSFET
+* P-type terminals, N-type body
+* When P.D applied to gate, **narrows** channel, source and drain dosconnected
+* Removing P.D widens channel, connecting source and drain
+```
+	s
+	|
+     |---
+g -o||
+     |---
+	|
+	d
+```
+
+#### Switches and Transistors
+* Typically P-MOSFET and N-MOSFET transistors are not used in isolation
+* A CMOS cell combines one N and one P-MOSFET transistor; they work in a complementary way.
+
+#### Manufacture
+* wafer
+* substrate silicon
+* photoresist
+* expose photoresist to a mask, hardening exposed photoresist
+* wash away unhardened photoresist
+* etch away exposed silicon
+* strip away hardened photoresist
+
+
