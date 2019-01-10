@@ -1184,4 +1184,202 @@ Don't
 * People who are 'agreeable' - more likely to do things for others
 * Nigerian Prince scams - filter out people who are unlikely to complete whole scam process
 
+---
+
+## Privacy
+
+### Browsing
+
+#### HTTP headers
+* Your browser tells the server what operating system and what browser you are using.
+* This is a feature so that the server can tailor the data being sent to your computer, for example:
+	* send video files in a playable format
+	* send correct data if it uses non-standard features
+* However this also leaks information about you.
+
+#### IP addresses
+* When you make a web connection, the server sees the **publuc IP address** of your machine.
+* This is a feature (otherwise it couldnt send the page back) but it also leaks information about you.
+* Specifically, this feature can be used for geolocation
+	* **Helpful** - send large files from nearby server
+	* **Less helpful** - videos not being available to you due to region.
+* A way to circumvent this is to use a proxy server/ VPN
+
+#### Other information
+* With Javascript, a site can detect the window and screen size of the person browsing
+* Allows site to fit features and content onto screen (now mostly replaced by stylesheets)
+* Still allows site to gain information about visitor
+
+#### Fonts
+* Flash plugins used to be common on sites
+* Allowed site to see installed fonts on machine
+* This can be used to infer a number of things such as:
+	* Operating system (Apple = Helvetica , Windows = Arial etc)
+	* Operating system *version* (new fonts)
+	* Whether you have **particular software installed** - certain software have unique fonts
+* These factors can give a unique fingerprint of your computer
+* Certain techniques exist using JS and CSS to measure element widths to determine fonts
+* The checking of fonts is a way to de-anonymise a visitor to a site. 
+* A more general technique to get information about a computer is called *canvas fingerprinting* and relies on drawing features to identify information such as OS, software, even graphics cards.
+
+#### Conclusion
+* You are usually not anonymous on the internet
+
+### Cookies
+
+#### Idea
+* Browser convention: after receiving a Set-Cookie header, add a Cookie header to all future requests to this site.
+* Cookies can also be deleted or set to expire.
+
+#### Sessions
+* On login, set cookie token
+* On next visit, site sees cookie header token and bypasses login page
+* Any page that has a login feature will normally use cookies and session tokens to implement this.
+
+#### Tracking cookies
+* A tracking cookie is a cookie with a unique ID used to track a visitor to a page.
+* A **session cookie** for "logging in" is a tracking cookie that is fairly harmless
+* BUT sites can set cookies without your consent and still track you whether you are logged in or not.
+* If a site hosts images or other resources from a third party site, they can also set cookies
+* The third party will know that you have loaded the image/ element
+* If you then visit a different site, which also works with the third party, the second site will know you are a customer of the first
+* Tumblr shares data with other companies unless you opt out
+	* they also set cookies to track you across different sites (also unless you opt out)
+	* now part of the "oath" group
+
+### GDPR
+* **General Data Protection Regulation**
+* The reason for "we use cookies" banners on websites
+* Processing **personal data** requires **consent** or one of several valid exemptions e.g.
+	* contract
+	* legal obligation
+	* public interest
+	* official authority
+* Online identifiers such as cookies and browser fingerprints are personal data
+
+#### Consent
+* Consent of the user must be given to the site before processing personal data
+* Consent means the user needs to give an unambiguous affirmative action or statement agreeing that their personal data can be processed
+* This can include something like ticking a box
+* Inactivity, pre-ticked boxes or silence does NOT constitute consent.
+
+### TOR
+* Originally a US Navy project, now open source
+* Relies on worldwide network of mixers and exit nodes
+* Current TOR browser is modified v of firefox
+* Approx. 750k users per day
+
+#### TOR reactions
+* US Army - good: field agents can use abroad
+* FBI - good: can go into illegal forums without being suspected
+* NSA - hate it 
+
+#### How it works
+* Data is sent through an encryoted tunnel via a number of relays to an exit node relay
+* Data goes through nested encryption (at least 3 times: the onion)
+* Only the first relay know who you are
+* Only the last relay know who the data is going to
+* No one relay know the full picture
+
+#### The dark web
+* TOR only protects the users identity, not the servers 
+* A subsystem called either the .onion domain or the dark web hides the server locations too.
+
+#### Silk road 
+* Drug site on the dark web for reliable drug order and delivery
+* Used currency like bitcoin (untraceable)
+* When FBI seized silk road servers and 144k BTC the trading massively went down
+
+#### The dark web
+* Due to its nature, hard to get an exact size of it or know its uses (considered a feature by creators)
+* Illegal activity shops exist on it and get shut down regularly
+* Anything that looks too good to be true is probably just that.
+
+* hidden service make around 1.5% of TOR traffic
+* 60-80k at any given time, appear and disappear very quickly (probably botnets)
+* biggest number of hhidden services are drug sites
+* However 75% is "abuse"
+
+#### Recommendations
+* TOR not illegal in itself in UK
+* Obviously using it for illegal purposes is illegal
+* Be wary of .onion domains unless you know exactly what you are looking for
+
+---
+
+## IoT - Internet of Things
+
+#### Internet of Things
+* Devices that are not general-purpose computers e.g
+	* appliances that can connect to the internet
+	* appliances with browsing features
+	* single-purpose appliances
+* Examples: sensors, security cameras, cars, "smart" devices etc
+
+#### Devices
+* **System on Chip** e.g. Arduino
+* **embedded systems**, often ARM processors (range: "tiny" to "smartphone")
+* full linux distros e.g. Raspberry Pi
+* "X with smartphone attached"
+
+#### Operating Systems
+* stripped down linux
+* dedicated OS (e.g. Google's Fuschia)
+* microkernel OS for real-time operation (e.g.FreeRTOS)
+* all options are roughly the same for security as log as you setup and configure them correctly
+
+#### Shodan
+* search engine for IoT devices
+* scans entire IPv4 address book for IoT devices that identify themselves as such in their HTTP headers
+* lots of security cameras
+
+### IoT security
+* IoT security camera can get infected with malware <100s of being setup
+* There are devices on the market that:
+	* use plain HTTP, no encryption (TLS)
+	* constantly "phone home" to their makers
+	* use the telnet protocol which has **zero security**
+	* have easy credentials like admin/admin, or none at all
+	* have bugs that let anyone take full control of the device
+
+#### HP study
+* 90% of devices collected >=1 piece of personal info
+* 80% raised privacy concerns
+* 70% unencrypted communications
+* 60% unencrypted update downloads
+* 60% with web-based interface had vulnerabilities
+
+#### IoT security
+* Nothing wrong in principle with connecting devices to the internet
+* BUT lots of problems in practice with the security of IoT devices currently being sold
+
+### Attack vectors
+
+#### IoT attack vectors
+* Once you have taken control of an IoT device there are many things they can be used for:
+	* send spam
+	* participate in DDoS attacks
+	* mine cryptocurrencies
+	* search for further vulnerable devices
+	* rent it out to fellow criminals
+* A group of compromised machines under the control of one person or group is called a **botnet**
+
+#### Mirai
+* malware that creates a botnet from IoT devices, mainly security cameras
+* used to attack sec researcher in 2016, DDoS up to 1Tbit/s, new record
+* made open-source
+* used in attack on Dyn (DNS service provider) causing major internet site disruption
+
+### Defences
+* Most devices do NOT need to be on the net
+* Place devices behind a firewall/router
+* If access is required, set up a hardened access point with either ssh or VPN
+* Devices that "phone home" can be a security and privacy risk
+
+* Anything connected to the internet needs a:
+	* risk analysis
+	* a spec for exactly what it can do and who it can communicate with (enforced by a firewall)
+	* updates whenever a vulnerability is discovered
+
+---
 
