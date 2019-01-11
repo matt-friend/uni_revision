@@ -1837,7 +1837,250 @@ We write a concordance using Trie structures
 
 ---
 
-			     	 
-	
+##### lecture 22
 
+The simplest 'Trie' structure contains nothing:
 
+```haskell
+empty :: Trie k v
+empty = Trie Nothing Map.empty
+
+-Nothing : The tree has no values
+-Map.empty : The map is empty
+```
+
+Once we have an empty "Trie" it is useful to add elements to it. This is done using "insert"
+
+```haskell
+insert :: Ord k => [k] -> v -> Trie k v -> Trie k v
+insert [] v (Trie mv tkv) = Trie (Just v) tkv
+insert (k:ks) v (Trie mv tkv) = Trie mv tkv'
+	where
+	tkv' :: Map k (Trie k v)
+	tkv' = case Map.lookup k tkv of 
+		Nothing -> Map.insert k (insert ks v empty) tkv
+		Just t -> Map.insert k (insert ks v t) tkv
+```
+
+In the case where the keys are empty, ie 'insert []', we chose to ignore the value 'mv' amd replace it with 'Just v'. This is a destructive update. We will fix this later with the 'adjust' function.
+
+Once we have a 'Trie' we want to be able to lookup values:
+
+```haskell
+lookup :: Ord k => [k] -> Trie k v -> Maybe v
+lookup [] (Trie mv tkv) = mv
+lookup (k:ks) (Trie mv tkv) = 
+	case Map.lookup k tkv of 
+		Nothing -> Nothing
+		Just t -> lookup ks t
+```
+
+The adjust function can be implemented naively by combining insert and lookups:
+
+```haskell
+adjust :: Ord k => [k] -> (Maybe v -> Maybe v) -> Trie k v -> Trie k v
+adjust ks f t = case lookup ks t of
+	Nothing -> insert ks (f Nothing) t
+	Just v -> insert ks (f (Just v)) t
+```
+
+In fact, we could simplify this:
+
+```haskell
+adjust ks f t = insert ks (f (lookup ks t)) t
+
+-(lookup ks t) :: Maybe v
+-(f (...)) :: Maybe v
+```
+
+The types in this naive implementation do not work. The problem is that insert requires a value of type 'v', but we are supplying a type 'Maybe v'.
+
+The real adjust function needs to be able to both insert and delete values depending on the function f.
+
+For full details, see the Trie.lhs file.
+
+---
+
+##### lecture 23
+
+### Input and output
+
+A computer program usually interacts with the world. Haskell programs are no exception to this. The type 'IO' represents computations that perform input/output in some way, and returns some pure value.
+
+For example, consider a function that will read a 'String' from a file:
+
+```haskell
+	readFile :: FilePath -> IO String
+
+-FilePath : the name of the file
+-IO : telling you that this interacts with the real world 
+-String : the pure value result
+```
+
+Another useful function i son ethat allows us to write values to a file:
+
+```haskell
+	writeFile :: FilePath -> String -> IO()
+```
+
+This function takes in a file path and a string, and outputs that string to the file.
+
+Note: FiilePath is a synonym for String:
+
+```haskell
+type FilePath = String
+```
+
+The functions become useful in the context of a program. A program in Haskell is given by the functoin:
+
+```haskell
+main :: IO()
+```
+
+This is the main entry point for any compiled program
+
+--- 
+
+##### lecture 24
+
+terminal session
+
+---
+
+##### lecture 25
+
+Two useful functions that perform IO are:
+
+```haskell
+putStr :: String -> IO()
+```
+
+This function takes in a String and outputs it to the terminal. One variation is the following:
+
+```haskell
+putStrLn :: String -> IO()
+```
+
+These functions produce output, and the opposite is:
+
+```haskell
+getLine :: IO(String)
+```
+
+In order to do these things in sequence, we need a way to write several 
+Two useful functions that perform IO are:
+
+```haskell
+putStr :: String -> IO()
+```
+
+This function takes in a String and outputs it to the terminal. One variation is the following:
+
+```haskell
+putStrLn :: String -> IO()
+```
+
+These functions produce output, and the opposite is:
+
+```haskell
+getLine :: IO(String)
+```
+
+In order to do these things in sequence, we need a way to write several statements.
+
+#### Do Notation
+
+The **do** notation allows different IO actions to be put into sequence:
+
+```haskell
+do putStr "Hello "
+   putStrLn "world!"
+```
+
+This is equivalent to the following:
+
+```haskell
+do {putStr "Hello "; putStrln "world!"}
+```
+
+We also have notation that allows us to extract values from an IO computation:
+
+```haskell
+do putStrLn "What is your name?"
+   name <- getLine
+   putStrLn ("Your name is" ++ name ++ "foolish human")
+```
+
+This has introduced a variable called 'name', which is bound to the value of 'getLine'
+
+### Sequencing
+
+Do notation is "syntactic sugar", which means that it is translated to some more fundamental operations. They are as follows:
+
+```haskell
+(>>) :: IO a -> IO b -> IO b
+```
+
+The result of 'p >> q' is to execute 'p' then execute 'q' and result in the value of 'q'.
+
+For example:
+
+```haskell
+putStr "Hello" >> putStrLn "world!"
+```
+
+This executes oen computation followed by another but there can be no data from the first compuation that is used by the second: the avlue of type 'a' is discarded.
+
+A more useful combinator is called 'bind', defined as follows:
+
+```haskell
+(>>=) :: IO a -> (a -> IO b) -> IO b
+```
+
+Given some computation 'p :: IO a' and a function 'f :: a -> IO b', the result of 'p >>= f' is to execute p, then feed the result to f and execute f.
+
+For example:
+
+```haskell
+getLine >>= printName
+
+printName :: String -> IO()
+printName xs -> putStrLn ("Your name is " ++ xs)
+```
+
+The result of the example is to read a line of input from the user, and print it back out.
+
+The translation from do notation to using '(>>)' and '(>>=)' is as follows:
+
+```haskell
+do p  ~~~> p >> q
+   q 
+
+and 
+
+do x <- p  ~~~> p >>= f
+   f x
+```
+
+This second clause is equivalent to:
+
+```haskell
+do x <- p  ~~~> p >>= (\x.f x)
+   f x
+```
+
+The equivalence holds because 'f = \x.f x'
+
+Suppose we want to use our 'printName' function. There are two options:
+
+```haskell
+printname "Foolish"
+```
+
+or 
+
+```haskell
+return "Foolish" >>= printName
+```
+
+Here 'return :: a -> IO a' wwill take a value of type 'a', and wrap it up with 'IO'
