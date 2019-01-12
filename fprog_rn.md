@@ -2084,3 +2084,240 @@ return "Foolish" >>= printName
 ```
 
 Here 'return :: a -> IO a' wwill take a value of type 'a', and wrap it up with 'IO'
+
+### IO and the world
+
+One way to understand 'IO a' is that it is an abstraction that takes the state of the world, and produces a new world along with a value of 'type a'.
+
+We can model this as follows:
+
+```haskell
+type IO a = World -> (a, World)
+```
+
+For instance, we can think of putStr "Hello"
+
+```haskell
+	putStr "Hello" :: IO a ()
+=
+	putStr "Hello" :: World -> (a, World)
+
+-(a, World) is the new world where "Hello" has been written to the screen
+```
+
+We can write the above as follows:
+
+```haskell
+(x, w') = putStrLn "hello" w
+
+-w' : the new world
+-w  : the old world
+```
+
+So when we write:
+
+```haskell
+p >>= f
+```
+
+then really, we feed in the state of the world w in p, produce a new world and a value, '(x, w')', and then the result is 'f x' applied to w', which gives some value '(y, w'')'
+
+---
+
+##### lecture 26
+
+### Monads
+
+A monad is an abstraction of a sequential computation. IO is a monad because programs interact with the world sequentially.
+
+In many imperative languages, sequentiality is expressed using a semicolon:
+
+```
+p; q
+```
+
+This means perform p then q.
+
+In Haskell we use >> and >>= for this purpose. Roughly speaking we have this equivalence:
+
+```haskell
+p; q  ~~~> p >> q
+
+x = p; f(x) ~~~> p >>= (\x -> f x)
+```
+
+Where
+
+```haskell
+(>>) :: IO a -> IO b -> IO b
+p >> q = p >>= (\x -> q)
+```
+
+The behaviour of monads is captured by the interaction of two functions that are governed by the three monad laws.
+
+We use a class to capture this relationship.
+
+```haskell
+class Monad m where
+	return :: a -> m a
+	(>>=) :: m a -> (a -> m b) -> m b
+```
+
+The 'return' function produces values in the computational context without performing any computation. 
+
+The Monad laws are as follows:
+
+1. Monad left unit law:
+
+```haskell
+return x >>= f = f x
+
+-return :: a -> m a
+-x      :: a
+-(return x) :: m a
+-f      :: a -> m b
+-(return x >>= f) :: m b
+-f x    :: m b
+```
+
+This tells us that a return on the left of a bind, ie >>=, does nothing interesting. The value 'x' is passed to 'f' without modification.
+
+Note: Every monad must also adhere to the functor laws.
+
+2. Monad right unit law:
+
+```haskell
+p >>= return = p
+
+-p :: m a
+-return :: a -> m a
+-p >>= return :: m a
+```
+
+This says that 'return' is a fuunction that adds no computational content when it follows bind.
+
+3. Monad associativity law:
+
+```haskell
+(p >>=f) >>= g = p >>= (\x -> f x >>= g)
+```
+
+This is roughly equivalent to saying that:
+
+```
+(p; q); r = p; (q; r)
+```
+
+In other words, performing 'p' then binding the result to 'f', then binding the result to 'g' is the same as performing p then binding the result of p to 'f', and then binds the result to 'g'.
+
+### Maybe Monad
+
+This monad captures the notion of failure. A failure propogates throughout a system sequentially.
+
+```haskell
+instance Monad Maybe where
+	--return :: a -> Maube a
+	return x = Just x
+
+	--(>>=) :: Maybe a -> (a -> Maybe a) -> Maybe a 
+	Nothing >>= f = Nothing
+	Just x >>= f = f x
+```
+
+Now we are, for reason, compelled to prove the monad laws:
+
+1. return x >>= f = f x
+
+```haskell
+	return x >>= f
+=	{def return}
+	Just x >>= f
+=	{def >>=}
+	f x
+```
+
+2. p >>= return = p
+
+Note that p :: Maybe a , so we perform a case analysis:
+
+case p = Nothing:
+
+```haskell
+	Nothing >>= return
+=	{def >>=}
+	Nothing
+```
+
+case p = Just x
+
+```haskell
+	Just x >>= return
+=	{def >>=}
+	return x
+=	{def return}
+	Just x
+```
+
+3. (p >>= f) >>= g = p >>= (\x -> f x >>= g)
+
+case p = Nothing:
+
+```haskell
+	(Nothing >>= f) >>= g	|	Nothing >>= (\x -> f x >>= g)
+=	{def >>=}		|=	{def >>=}
+	(Nothing) >>= g		|	Nothing
+=	{def >>=}		|
+	Nothing			|
+```
+
+case p = Just x
+
+```haskell
+	(Just x >>= f) >>= g	|	Just x >>= (\x' -> f x' >>= g)
+=	{def >>=}		|=	{def >>=}
+	(f x) >>= g		|	(\x' -> f x' >>= g) x
+				|=	{def application}
+				| 	f x >>= g
+```
+
+Since Maybe is a monad, we can use do notation.
+
+Suppose we have the following:
+
+```haskell
+headMay :: [a] -> Maybe a
+headMay [] = Nothing
+headMay (x:xs) = Just x
+
+divMay :: Int -> Int -> Maybe Int
+divMay _ 0 = Nothing
+divMay x y = Just (div x y)
+```
+
+---
+
+##### lecture 27
+
+Using these functions, we could write code in the following way:
+
+```haskell
+prog :: [Int] -> Maybe Int
+prog xs = do x <- headMay xs
+	     y <- divMay 5 x
+	     return y
+```
+
+This demonstartes how do notation allows us to write programs in some computational context without worrying about the book-keeping aspects of that computation.
+
+note: 
+
+```haskell
+do x <- p
+
+-x :: a
+-p :: m a    for a monad m
+```
+
+In combination with 'return :: a -> m a', we can write such monadic programs.
+
+---
