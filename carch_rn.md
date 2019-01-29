@@ -134,7 +134,7 @@ g --||
 #### P-MOSFET
 * P-type MOSFET
 * P-type terminals, N-type body
-* When P.D applied to gate, **narrows** channel, source and drain dosconnected
+* When P.D applied to gate, **narrows** channel, source and drain disconnected
 * Removing P.D widens channel, connecting source and drain
 ```
 	s
@@ -159,4 +159,57 @@ g -o||
 * etch away exposed silicon
 * strip away hardened photoresist
 
+#### Physical limitation
+* There are two types of delay in combinatorial logic
+	* wire delay - delay of propogation of electrical current through a wire
+	* gate delay - the delay when transistors in gates switch between connected and unconnected states.
+* Gate delay typically > wire delay
+* **Critical path** - the longest sequential sequence of delays between inputs and outputs.
+* For certain combinatorial setups, the output will not match the input due to propogation delays.
+
+---
+
+### Counter Machines
+* very simple machines (usually hypothetical, used for proving computational theory)
+* Register machines with certain properties:
+	* register length is unbounded
+	* number of registers goes from 1 -> infinity
+* Very limited instruction set (<10)
+
+* unbounded registers = unlimited memory storage (provided use Godel encoding)
+* not practical in normal situations, good for theory
+* physical implementations with limited registers of finite length exist and are easy to implement
+
+#### Godel numbering
+* product of first n primes raised to their corresponding values in the sequence
+* eg if r = 1440, {5,2,1} = 2<sup>5</sup>\*3<sup>2</sup>\*5<sup>1</sup>
+* Key is to encode and fully decode without losing any information.
+
+#### Counter machine instruction set
+* Counter machines can perform any operation
+* Most common instructions are :
+	* INC r (increment register r)
+	* DEC r (decrement register r)
+	* JZ r (jump if r = 0)
+
+#### Counter machines memory
+* Instructions separated from memory
+* Therefore use the Harvard memory paradigm
+* Implicit PC defined
+* PC only updatable via jumps
+* Data values only stored in the defined registers
+
+#### All other operations are synthasizeable
+* All operations can be created using INC, DEC, JZ
+* e.g. COPY or ADD r<sub>i</sub>, r<sub>j</sub>
+* Also CLR, J, MUL
+
+#### Counter machines
+* A counter machine with at least two unbounded registers is Turing powerful
+
+#### Simulation efficiency
+* Although everything possible with Turing powerful machine, not easy or efficient
+* Simulation efficiency usually terrible
+* Inclusion of more complex instructions can reduce computation times significantly
+* Many alternative register machine implementations are more efficient tahn a Turing machine
 
