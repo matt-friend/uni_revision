@@ -291,3 +291,24 @@ Read access steps:
 * SRAM is good for logic - DRAM capacitors bad for logic
 
 ### HDD vs Flash
+* Hard disks are mechanical so slower and easier to wear (moving parts) vs flash which is solid state
+* HDDs are cheaper 
+
+### Locality in Space and Time
+Locality - things close to each other are likely to be similar
+
+E.g. 
+* space locality; geography, sit in friend groups (similar people)
+* time locality; weather, attendamce to lectures
+
+### Memory locality
+* Temporal - program likely to access the same memory repeatedly in a short period of time
+* Spatial - programs reference cluster of nearby adddresses; instructions tend to be in sequence; data structures stored in sequential memory/ nearby locations
+
+### Caching - exploiting locality
+* Temporal - recently accessed data is stored in cache memory; typical access time reduced to that of cache memory rather than primary memory
+* Spatial - memory is loaded as chunks/ blocks of memory that are close together; memory that has not been used but is loaded but is likely to be used in the near future; "hit rate" for modern cache is ~95%"
+
+---
+
+
