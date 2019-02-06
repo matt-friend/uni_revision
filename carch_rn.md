@@ -213,3 +213,81 @@ g -o||
 * Inclusion of more complex instructions can reduce computation times significantly
 * Many alternative register machine implementations are more efficient tahn a Turing machine
 
+---
+
+## Memory Hierarchy
+
+### The ideal computer
+
+Instruction supply:
+	* Zero-cycle latency
+	* Infinite capacity
+	* Zero cost
+	* Perfect control flow
+
+Data supply:
+	* Zer-cycle latency
+	* Infinite capacity
+	* Zero cost
+	* Inifinte bandwidth
+
+Instruction Execution:
+	* Zero latency compute
+	* Enough functional units
+	* Zero cost
+	* Perfect data flow
+
+### Ideal memory
+
+Ideal memory has:
+	* Zero access time
+	* Zero cost
+	* Infinite capacity
+	* Infinite bandwidth
+
+Unfortunately these requirements are antagonistic:
+	* Bigger is slower; larger memory means longer search times to determine location
+	* Faster is more expensive; higher quality memory is harder to manufacture
+	* Higher bandwidth is more expensive (more banks, more ports, higher frequency etc)
+
+### The problem
+
+Bigger is slower:
+	* SRAM, 512 bytes, sub-nanosec
+	* SRAM, KByte~MByte, nanosec
+	* DRAM, Gigabyte, ~50nanosec
+	* Hard Disk, Terabyte, ~10 millisec
+
+Faster is more expensive:
+	* SRAM < 10$ p Megabyte
+	* DRAM, < 1$ p Megabyte
+	* HDD, < 1$ p Gigabyte
+
+### DRAM
+* One bit of charge stored on a capacitor
+* Consists of transistor for reading/ writing and capacitor
+* Capacitor loses charge over time
+* Loses charge when accessed
+* Needs to be refreshed
+
+### SRAM
+* Two cross-coupled inverters
+* So 6 transistors needed
+* Retains memory if powered
+
+### Memory Bank (generic)
+
+Read access steps:
+	* Decode row (MSB), activate word lines
+	* Decode column (LSB), select subset of row via bit lines
+	* Amplify row data
+	* Send to output
+
+### SRAM vs DRAM
+* SRAM is faster access (no capacitor vs DRAM)
+* SRAM is lower density
+* SRAM is more expensive
+* SRAM has no need for refresh, DRAM leaks 
+* SRAM is good for logic - DRAM capacitors bad for logic
+
+### HDD vs Flash

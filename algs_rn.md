@@ -114,3 +114,123 @@ Important properties for analysis of algorithms
 * Super-exponential time O(2<sup>2<sup>n</sup></sup>) : very bad
 
 ---
+
+## Algorithms Lecture 3 - Theta, Omega Notation, RAM Model
+
+### Limitations/ Strengths of Big-O
+O-notation: Upper Bound
+	* Runtime of O(f(n)); input of length n has a runtime bounded by some function in O(f(n))
+	* If runtime O(n<sup>2</sup>), actual runtime can be in O(log(n)), O(n), O(nlog(n)) etc..
+This is a strong point:
+	* Worst case runtime; runtime of O(f(n)) guarantees may be faster, definitely not slower.
+	* E.g. fast peak finding usually faster than 5log(n)
+How to avoid ambiguities:
+	* Theta-notation: Growth is precisely determined up to constants
+	* Omega notation: Gives lower bound (fastest time)
+
+### Theta notation
+Growth is precisely determined up to constants
+
+Definition: 
+	* Let g : N -> N be a function. Then Theta(g(n)) is the set of functions:
+	* Theta(g(n)) = {f(n) : There exists positive constants c<sub>1</sub>, c<sub>2</sub>, n<sub>0</sub> such that 0 <= c<sub>1</sub>G(n) <= f(n) <= c<sub>2</sub>g(n) for all n >= n<sub>0</sub>}
+
+f is in Theta(g): "f is asymptotically sandwiched between constant multiples of g"
+
+### Symmetry of Theta
+
+Lemma: The following statemnets are equivalent:
+	* f is in Theta(g)
+	* g is in Theta(f)
+
+### Further properties of Theta
+
+Lemma: The following statements are equivalent:
+* f is in Theta(g)
+* f is in O(g) and g is in O(f)
+
+Runtime of Algorithm in Theta(f(n))?
+	* Only make sense if alg always requires Theta(f(n)) steps, i.e only best-case and worst-case runtime are Theta(f(n))
+	* This is not the case in Fast Peak Finding
+	* However, ok to say that worst-case runtime of alg is Theta(f(n))
+
+### Big Omega Notation
+
+Definition: 
+	* Let g : N -> N be a function. Then Omega(g(n)) is the set of functions:
+	* Omega(g(n)) = {f(n) : There exists positive constants c and n<sub>0</sub> such that 0 <= cg(n) <= f(n) for all n >= n<sub>0</sub>}
+
+f is in Omega(g): "f grows asymptotically at least as fast as g up to constants"
+
+### Properties of Omega
+
+Lemma: The following statements are equivalent:
+	* f is in Omega(g)
+	* g is in O(f)
+
+E.g 10n<sup>2</sup> is in Omega(n); reverse Big-O examples for more Big_Omega examples.
+
+Using runtime in Omega(f)?
+
+Only makes sense if best-case runtime is in Omega(f)
+
+### Using Big-O, Omega, Theta in Equations
+
+Notation:
+	* Big-O, Omega, Theta often used in equations;
+	* "Is in" often replaced by "="
+
+Examples:
+	* 4n<sup>3</sup> = O(n<sup>3</sup>)
+	* n + 10 = n + O(1)
+	* 10n<sup>2</sup> + 1/n = 10n<sup>2</sup> + O<1>
+
+Observe:
+	* Sloppy but convenient
+	* When using Big-O, Omega, Theta in equations details get lost
+	* Allows us to focus on essential parts of the equation.
+	* Not reversible! Cannot convert to Big-O notation and back again i.e. O(1) /= 10
+
+## The RAM model
+
+### Models of computation
+
+Real computers are complicated
+	* Memory hierarchy, Floating point operations, garbage collector, compiler optimisations etc
+
+Models of Computation:
+	* Simple abstraction of a computer
+	* Need to define "rules of the game" i.e what operations and methods can this computer use; what is the cost of these operations; cost of algorithm = sum of cost of operations.
+
+### RAM Model
+
+Random Access Machine Model
+	* Inifnte RAM (array) with unique address for each cell
+	* Each cell stored one word (e.g. integer, char, address)
+	* **Input**: stored in RAM
+	* **Output**: to be written to RAM
+	* A finite (constant) number of registers (eg. 4)
+
+In a single time step we can
+	* Load a word from memory into the register
+	* Compute (+,-,\*,/), bit operations, comparisons etc)
+	* Move a word from register to memory
+
+Algorithm in the RAM Model is a sequence of elementary operations (similar to assembly code)
+
+Cost of an Algorithm: 
+	* **Runtime**: Number of elementary operations used
+	* **Space**: Number of cells used; excluding those used to store input
+
+Assumption:
+	* Input for algorithm is stored on read-only cells
+	* This space is not accounted for
+
+### Specifying an Algorithm
+
+How to specify an algorithm:
+	* We use pseudo-code to specify an algorithm
+	* We always bear in mind that every operation of our algorithm can take place in O(1) elemntary operations in the RAM model
+	* O-notation gives us the necessary flexibility for a meaningful definition of runtime
+
+---
