@@ -1,4 +1,4 @@
-### week1
+### Week1
 
 #### Goals toward Object Orientation
 * Modularity - code is well organised in small unites, easy to handle
