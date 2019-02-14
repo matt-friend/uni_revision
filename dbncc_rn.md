@@ -164,3 +164,85 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 * General-purpose langauge like Java used to prepare the data then AFM displays the data using templates
 
 ---
+
+## Tables in SQL
+
+### Concept - Tables and keys
+* rows/ records
+* column names/ fields/ attributes
+* schema: information about the table without saying any of the informantion in it
+
+### How to address data in a table
+* SUPERKEY - a combinatoin of fields that uniquely determines a row
+* CANDIDATE KEY/ KEY - a superkey that is also minimal
+
+### SUPERKEY
+* This means: after choosing data for the fields in the superkey. there is no choice over the rest of the data in that row
+* E.g. {house, postcode} is a superkey for address{house, street, town, postcode} - if I fix (house, postcode) then there is no choice for the rest of the fields
+* E.g. {countryName} is a superkey for Countries(countryName, capitalCity, continent) - continent is not a superkey as it can be present in multiple records
+* If something is uniquely determined then there is no choice (sic)
+
+### Candidate key
+* If you remove any field from a key it ceases to be a superkey
+* Minimal because there is mp smaller subset that works
+* E.g. {house, postcode} is a key
+* {postcode} is not a key
+* {house, postcode, street} is not a key because it is not minimal
+* sometimes need to make assumptions for a key e.g. assuming that there are no two bank branches of the same bank on the same road to get the key of {bank, road, town} from the table bankBranch{bank, road, town, sortCode}
+
+### SQL
+
+### INSERT INTO
+* use to put record into table
+* provide fields and data
+* e.g. INSERT INTO Address (house, postcode) VALUES (16, 'WR11 3XY')
+* it is not necessary to populate all the fields in a table - if fields have default value table will take that if field missing, otherwise null
+* Strings must be single quoted
+
+### DELETE FROM
+* DELETE FROM Address;
+* must give semicolon to process function
+* DELETE FROM Address WHERE town = 'Bristol' 
+* UPDATE TABLE Address SET town = 'Bristol' WHERE postcode = 'XXXX YYY'
+
+### DROP TABLE
+* gives error if field doesnt exist; use if exists to avoid
+* DROP TABLE lecturer
+* DROP TABLE IF EXISTS lecturer
+
+### CREATE TABLE
+* CREATE TABLE BankBranches ( // column definitions // table constraints )
+* Column definitions e.g (name VARCHAR(30), sortcode CHAR(8)) - varchar has variable length wheras char has fixed length (efficiency)
+* type = INT | VARCHAR (n) | CHAR (n) | BIGINT | TIME | REAL | DATE | TIME | DATETIME etc
+* Table constraints are a way to tell the DBMS about your table
+* e.g CONSTRAINT key_constr UNIQUE (name, street, town) where:
+	* key_constr is an identifier to be used in error messages
+	* (name, street, town) together form a key
+* this allows the DBMS to throw an error if you enter a tuple that contains a duplicaate key combination to an existing record
+	* ERROR: Duplicate entry for key 'key-constr'
+
+* Every table must have exactly one PRIMARY KEY. It is often a good odea to invent an artficial numeric key for this purpose
+* Otherwise, constraints are an oppotunity for you to give more information to the DBMS and in return will stop you from making mistakes
+
+### FOREIGN KEY
+* Used to link tables together
+* Good idea to have many tables where the subject of the table is distinct from others
+* e.g. Unit table might contain 'director' that is a FOREIGN KEY that links to the primary key of another table 'Lecturer'
+* CREATE TABLE Unit ( ... CONSTRAINT unit_dir FOREIGN KEY (director) REFERENCES Lecturer (id))
+* If you then try to DROP TABLE Lecturer there will be an error as there will now be dangling reference in the table Unit to a table that no longer exists
+
+### CREATE-DROP scripting
+* script to create a table
+* contains creation of tables in correct order to ensure foreign key establishment correctness
+* often contains a drop-table if exists at the top to ensure no pre-existing tables with same name as ones being created (helps if re-running script multiple times when first implementing and optimising)
+
+### NOT NULL
+* id INT PRIMARY KEY AUTO INCREMENT - auto increment assigns value to primary key of one more than previous record if not assigned
+* username VARCHAR(10) NOT NULL - not null guarantees property of data that it cannot be null either by ommission in record creation or by any other methods
+* num_dogs INT DEFAULT 0 - sets default value for field assignnemt if not specified in record creation 
+* 
+
+
+
+###
+
