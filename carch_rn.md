@@ -523,8 +523,46 @@ To store, for example, 42 in memory location 8, the processor would:
 
 ---
 
+## Assemblers and assembly language
 
+### What is assembly language?
+* Low level programming language (close to hardware)
+* Normally separate ones for each target processor architecture
+* Consists of mnemonics and explicit location and argument information
+* Generally the ratio of assembly instructions to architecture instructions (native) is 1:1
 
+### Assemblers 
+* Assembly language is the input to a program called an assembler
+* Assemblers take assembly language as input and produce architecture-specific machine code as output
+* Machine code is the binary language that is directly executable on the processor
+
+### Why not code in assembly?
+It used to be the most popular language, before high-level languages took over, but now it is rarely coded in for the following reasons:
+	* Assembly code is mostly machine-specific
+	* Assembly is generally too low-level for program writing (one line of C vs many lines of assembly)
+	* A human should not have to insert labels, addresses and immediates by hand
+	* Readability (and maintainability) is very poor for large segments of assembly
+
+### When is it useful?
+* Understanding the hardware and what is going on
+* Understanding the timing and requirements of code fragments (e.g. real time systems)
+* Designing compact executables for systems where memory is important 
+* Performing optimisations in code sections that are commonly used
+* Interacting with normally hidden architectural aspects
+
+### What does an assembler look like?
+* Code is of of the form ADD r0, r1, r2 or ADD r0, #1 (from ARM thumb syntax)
+
+### Labels
+* Labels are the way of naming code locations in assembler
+* e.g. in ARM syntax:
+
+'''
+.loop			<- label
+	ADD r0, #1
+	SUB r1, #1
+	BNE loop
+'''
 
 
 
