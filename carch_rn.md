@@ -557,12 +557,81 @@ It used to be the most popular language, before high-level languages took over, 
 * Labels are the way of naming code locations in assembler
 * e.g. in ARM syntax:
 
-'''
+```
 .loop			<- label
 	ADD r0, #1
 	SUB r1, #1
 	BNE loop
-'''
+```
+
+* This works because the assembler translates the label into a real address (usually we would not be able to pass text to the assembler)
+* The assembler completes the translation in a method called the two-step method, which is particularly important for forward references 
+
+### Two-pass assembling
+* Sweep through the program to break each line into its components (opcodes, operands, condition codes, etc). Keep track of instruction sizes (easy in fixed length ISAs). If a label is found store it in a table along with memory address
+* Starting again at the beginning of program, now convert each line to binary machine code, using values in the table.
+
+### The thumb assembler - general format
+* Thumb instructions take an instruction and 0 - 3 arguments. These arguments may be registers, immediates or addresses
+
+### Thumb terminology
+Mnemonics are used in assembler instructions
+* rm: 1st source argument
+* rn: 2nd source argument
+* rd: result destination
+* rdn: result destination and 1st source
+* i: immediate
+
+### Examples
+1. Add with immediate (implicit first reg)
+	* ADD rm, i8
+	* e.g. ADD r0, #3
+2. Add registers
+	* ADD rd, rm, rn
+	* e.g. ADD r0, r1, r2
+3. ADD to stack pointer and update it
+	* ADD sp, i8
+	* e.g. ADD sp, #5
+4. ADD SP/PC and immediate, place in register
+	* ADD rd, pc, i8
+	* e.g. ADD r0, pc, #12
+
+### Zoom in on arguments
+* Various instruction arguments must be specified:
+	* Immediate: preceded by '#'
+	* Register, by name (e.g. 'r0')
+	* Shifts (e.g. LSL #2 to shift left two)
+	* Addresses, surrounded by square brackets: [r1] means treat the contents of r1 as an address whereas [44] means access address 44
+* Argument length differs from instruction to instruction
+* Registers: either implicit or 3-4 bits long
+* Immediates: from 5-23 bits long
+
+### Memory instructions
+* Thumb v1 has two basic and some specialised instruction
+* Load: LDR \<dest reg>, [\<address>] e.g LDR r0, [r1] loads the contents of memory at r1's address into r0
+* Store: STR \<source reg>, [\<address>]
+* e.g. STR r0, [r1] stores the contents of r0 into r1's address
+* PUSH and POP: dedicated instructions for efficient stack access
+* Implicit destination and source in Thumb v1
+* Can take multiple register arguments: PUSH {r0, r1, r2} pushes 3 register values onto the stack
+
+### Assembler translation
+* When running over an input assembly file, a key feature of an assembler is to map the input to the 'best' output instruction (i.e select the closest match or the most efficient)
+* Sometimes the argument length is considered
+* For example, there are multiple different formatting options for the ADD instruction - the choice of format decided on will be determined from the arguments (as long as it is still adding it does not matter which one is used)
+
+### Assembly directives
+* Sometimes called a psuedo opcode
+* Is a piece of assembly that does not get converted into machine code
+* Tells the assembler to perform some action
+* There are multiple types of directives:
+	* Data directives tell the assembler to reserve spaces in the program for data e.g. SPACE 2 ; reserves two bytes of memory
+	* Symbol directives define symbols for ease of use in programming the assembly e.g. apple RN r6; defines "apple" for register 6
+
+---
+
+
+	
 
 
 
