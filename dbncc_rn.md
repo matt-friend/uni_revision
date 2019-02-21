@@ -240,9 +240,55 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 * id INT PRIMARY KEY AUTO INCREMENT - auto increment assigns value to primary key of one more than previous record if not assigned
 * username VARCHAR(10) NOT NULL - not null guarantees property of data that it cannot be null either by ommission in record creation or by any other methods
 * num_dogs INT DEFAULT 0 - sets default value for field assignnemt if not specified in record creation 
+
+---
+
+## Lecture 6?
+
+### Motivation
+* If a column/ field is linked to a primary key field in another table/ relation then you cannot enter a value into that column that does not already exist in the relation that has been linked to
+* Sending queries is expensive; want to find a way to reduce that number
+
+### Relational programming concept - Cartesian product
+* The product of tables you have two input tables that are combined to form a Cartesian product table consisting of all possible combinations of the rows in each table i.e two tables with 2 and 6 rows respectively would form a cartesian product table with 12 rows (all possible 'glueings'
+* Ways of determing meaningful rows - if some of the fields are related i.e if the primary key of one field is a foreign key in a field of the table it is being cartesianed with - can use this relation to filter out some more meaningful rows
+* Can infer meaning from table combinations like this - often large proportion of rows are removed 
+* This combination of processes is very prevalent - concept of JOIN
+* The result of this process is the JOIN of two tables based on a condition (usually one primary key = a foreign key)
+* So process is product followed by selection
+* e.g. Join of Mage and MageSpell on id = mage
+* DBMS does not typically perform automatic removal of fields - extra programming must be done to extract relevant information 
+* e.g. SELECT field FROM table (joins table on p.key = f.key) WHERE condition
+
+* Selecting names from table where field need to match unkown constant; JOIN to itself on field match
+* e.g. SELECT R.name FROM Lecturer L JOIN Lecturer R ON L.rgroup = R.rgroup / WHERE L.name = 'Peter'
+
+### SQL Join variants: Natural join
+* "Join on common columns"
+* If the two tables being joined have columns with the same name then join on those columns
+* Shorter but not recommended for use
+
+### SQL Join variants: Left join
+* Part of class of outer joins
+* Computes the inner join; looks at all rows on the left of the join that are not present in the join table and adds the record as a new row with missing fields populated as null
+* Ensures all data is present even if the result of the comparison for selecting join records is null
+
+### Join variants
+* Inner (just JOIN), natural, left outer (LEFT JOIN), right outer, full outer, cross (',' - this is just the product)
+
+### Set operations
+* Join is to glue tables
+* Query1 UNION ALL Query2 sticks all data from one table to data from another assuming all columns are the same
+* UNION does the same but removes duplicate records? 
+* INTERSECT
+* EXCEPT
+
+### How to read the E-R diagram of a schema
+* Entity relation diagrams
+* floating boxes (tables)
+* tables will have highlighted fields (primary key) - remember can be combination of multiple fields
+* entities are related by lines signifying a PK-FK relationship
+* often contextual information on the relationship such as relationship multiplicity - one to one, one to many
 * 
 
-
-
-###
 
