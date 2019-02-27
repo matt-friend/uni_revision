@@ -243,7 +243,7 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 
 ---
 
-## Lecture 6?
+## Lecture 8 - Product and join
 
 ### Motivation
 * If a column/ field is linked to a primary key field in another table/ relation then you cannot enter a value into that column that does not already exist in the relation that has been linked to
@@ -289,6 +289,55 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 * tables will have highlighted fields (primary key) - remember can be combination of multiple fields
 * entities are related by lines signifying a PK-FK relationship
 * often contextual information on the relationship such as relationship multiplicity - one to one, one to many
-* 
 
+---
+
+## Lecture 9 - Aggregration and nesting
+
+### Aggregration: part 1
+* Student field in Enrol relation - {Student, unit, grade}
+* What is the average grade of each student over all units?
+
+* Group relation by field x: x becomes a key on the output table
+* Can then use aggregation functions to specify other columns
+* e.g. aggregrate avg(y) would output the average of all y values for each unique x
+* Can't say **group by x, aggregate avg(y), z** as would not output three columns with same nunber of rows (z not aggregated)
+
+### Aggregation: part 2
+* Another aggregate function - max(z)
+* 'foo' - fill z with foo
+* **group by x, z aggregate avg(y)** all x, z values grouped together (need to appear in same field on original table)
+
+### Aggregation in SQL
+* Order: SELECT columns FROM table WHERE condition GROUP BY key column
+* Note: SQL requires that you list the key column in columns if you wish to have it appear in the output
+
+### SQL aggregate functions
+* MIN, MAX, AVG, SUM, COUNT, COUNT(DISTINCT x), COUNT (\*) (this includes null rows in the count)
+* Able to have basic math functions of the column inside the function call e.g. **SUM(10+grade * 2)**
+
+### How to avoid problems
+* Each column specifier in SELECT should return at most one value when evaluated on a group
+* This is guaranteed if each col is either:
+	* Mentioned in the GROUP BY clause
+	* An aggregate function application
+	* A constant
+
+### Selecting aggregates: HAVING
+* After groupin by key column and aggregating columns, you can once again select data conditionally
+* Use the HAVING operator after the GROUP BY clause
+* e.g. HAVING average >= 40 
+
+* Other functions after HAVING are ORDER BY (for ordering, by field ASC or DESC) and LIMIT n (display at most n rows)
+
+### Nested Queries
+* Using queries within queries for advanced data selection
+* Mostly used in WHERE or FROM
+* Needs to output specfic table size in WHERE depending on where query:
+	* WHERE field = value - sub-query needs to output a 1x1 value
+	* WHERE field IN - sub-query needs to output exactly one column
+	* WHERE EXISTS - **Correlated** sub-queries run once for each row of the input table 
+* If using sub-query in FROM, need to name table after sub-query e.g. SELECT x, y FROM (...sub-query...) AS T ...
+
+---
 
