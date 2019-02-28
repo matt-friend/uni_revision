@@ -341,3 +341,58 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 
 ---
 
+## Lecture 10 - Normalisation 1/2
+
+### The problem
+* Table with lots of repeated data
+* For example Department/Faculty - will modern lang. ever not be in the arts faculty?
+* Problem - what if we change the department but not the faculty?
+* Repeated data - what if one piece is changed; all data would need to be changed in the table and if just one piece of data is left unchanged there is the problem of inconsistent data
+
+### Normalisation
+* Informal definition: a way to make your schema more complicated in order to make operations easier
+* Eliminates redundancy and dependency
+
+### Functional dependencies
+* Suppose we want a database on the regions of England
+* {city, c\_pop, region, r\_pop, country}
+
+### Anomalies
+* INSERT anomly - We can't have a city thats not in a region or a region with no cities
+* UPDATE anomaly - if the population of a region updates, we have to update many rows
+* DELTE anomaly - removing the last city in a region would erase the regions total population too
+
+### Problems with the table
+* Stores properties of two entities in the table; information about cities and regions are stored in the same row
+* Repeated data
+
+### Functional dependencies
+* Definition - An attribute A **fucntionally depends on** a set of attributes  XS just if the value of A is uniquely determined after fixing values for XS
+* We write the functional dependency as XS -> A
+
+* XS -> YS iff For all A in YS, XS -> A
+* So: XS is a superkey iff For all A of T,  XS -> A
+* i.e all other attributes in the table are uniquely determined once the superkey is fixed
+
+* A candidate key is a key where if you look at some subset of the attribute in the candidate key ther e is no functional dependency between that subset and the rest of the table
+
+* {uname} -> fname
+* {uname} -> lname
+* {uname, fname} -> lname
+* {lname} -> lname
+* {fname} -/-> lname
+
+### Laws of functional dependencies
+* Reflexivity: {X} -> X
+* Weakening: XS -> A so XS Union YS -> A
+* Definition: A dependency XS -> A is said to be **trivial** just if A is in XS
+
+* Resolution: {XS} -> Y<sub>i</sub> , {YS} -> A so {Y<sub>1</sub>..Y<sub>i-1</sub>, XS, Y<sub>i+1</sub>... Y<sub>k</sub>} -> A
+
+---
+
+
+
+
+* We
+
