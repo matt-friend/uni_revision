@@ -389,10 +389,9 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 
 * Resolution: {XS} -> Y<sub>i</sub> , {YS} -> A so {Y<sub>1</sub>..Y<sub>i-1</sub>, XS, Y<sub>i+1</sub>... Y<sub>k</sub>} -> A
 
+### Keys from fundeps
+* If we know the functional dependencies in a table we can figure out a key
+* Apply the transitive properties of functional dependencies to find a minimal set of attributes that uniquely determine all other attributes in the table.
+
 ---
-
-
-
-
-* We
 
