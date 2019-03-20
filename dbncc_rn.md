@@ -395,3 +395,126 @@ XML has to be parsed with an XML parser. JSON can be parsed by a standard JavaSc
 
 ---
 
+Lecture 12: JDBC: SQL in Java
+
+Application uses a db api to communicate with the database. The api will be based on a database library and drivers which will be particular to the programming language used.
+
+The Java datbase api is called JDBC. Its classes are in the java.sql and java.api packages.
+
+Connection is managed using the java.sql.Connection and .DriverManager classes/ packages.
+
+Connection c = DriverManager.getConnection("connectionstring"); c.close() -> make sure to close the connection, in a widely used database you dont want open connections causing network traffic and congestion.
+
+When using SQL in Java you want to wrap the main function in a try-catch block for the conection as there are many ways it can fail. This allows you to catch the SQL exception.
+
+Makes sense to prepare a SQL statement once with placeholders as takes time to prepare; dont want to do it multiple times as will be slow. PreparedStatement s = c.prepareStatement(....sql...); -> statement is a method of the connection object.
+
+Definition: A transaction is a
+
+Most DBMSs have a transaction manger that takes care of the ACID properties of a database. Atomicity, Consistency, Isolation, Durability. Using JDBC, every statement runs in its own transaction unless manual transaction management has been enabled (c.setAutoCommit(false)). commit calls the transaction. rollback if their is a fail and any changes na==made need to be undone (usually used in a try/ catch).
+
+---
+
+## Web Security 
+
+### Security is hard
+Kids Pass - Aug 2017
+* change account no. in url - see someone elses account
+* passwords stored in plaintext
+* vulnerable to sql injection
+* anecdotal evidence of admin password being adminadmin
+
+Oil and gas international
+* Notified of weak security
+* Disagreed
+* Posted to reddit, got hacked
+
+### Rule \#1 of web security
+
+All data coming from the client is assumed to be malicious util you have properly validated it.
+
+### HTTP is stateless
+* You send a request, you get a response, the connection ends
+* If you send another request, unless you do something/ give the server something explicit to go on the server has no way of determining if you are the same person
+* This is solved by cookies
+
+### Cookies
+* Browsers implement cookies to get state between requests
+* If a response contains a cookie header then all further requests to the same server will include this header
+* This can be used for features like preferences, remembering passwords etc (good)
+* Can also be used for tracking (bad)
+
+### Sessions
+* Can be built on top of cookies
+* If the server believes you are who you say you are, it will generate and store a long number (session token) that it will store in a database and give to you.
+* Multiple HTTP requests will be able to confirm that the session is the same using the token.
+* When you log out, the session token is deleted from the server session database, invalidating usage of that token in the future
+
+### Session hijacking
+* When someone tries to break into an account by stealing a copy of their session data
+* Can be made harder by not using predictable session tokens
+
+### Session tokens
+* Use type 4 pseudorandom UUID
+* cryptographically secure, 128~ bit security
+* No user-related data in token
+
+### What not to do
+* Never include secret data in a cookuie like passwords or other data, even if encrypted
+
+### Secure cookies
+* HTTPOnly: Cookie not accessible to javascript; prtoects against scripting attacks
+* Secure: cookie will only be sent for TLS encrypted requests
+* These should both be set for cookies in production
+
+### XSS
+* XSS: Cross-Site Scripting - if your website displays user-generated content make sure it is validated; it could be malicious and scripted messages will be executed if not pattern-matched for scripting tags.
+* Defemse 1: There are librarys to prevent this from happening
+* Defense 2: HTTP security headers
+
+### CSRF
+* Cross-Site Request Forgery: You click a link on one site that causes an action on another site that you are logged in to
+* Most of the reponsibilty lies with the target
+* Defence 1: Check the referrer and origin HTTP headers - browsers only send origin for POST requests
+* Defence 2: If necessary use per-request CSRF security tokens
+* Defence 3: Re-authenticate before critical operations (e.g. changing passwords requires re-entry of password)
+* Defence 4: For an API, you can add and require custom "X-" headers
+
+### SOP and CORS
+* Same Origin Policy - browsers only allow javascript requests to the same origin (protocol, host, port) as the source of the script.
+
+* CORS - Cross Origin Resource Sharing
+* To bypass SOP for legitmate resons, e.g hosting some open source data that other sites should have acess to, you need to allow that access through scripts. 
+* Then you should set the header Access-Control-Allow-Origin: \* in the responses
+
+### TLS
+* Encrypting traffic with a key so that noone else can understand the data, even if they can see it. 
+* Problem - the attacker could be on the path to the server i.i malicious router
+* You may set up a secure connection with this bad guy who will be able to pass on the information you send to the actual site, decrypting your information and details in the process
+* Solution - browsers have root certificates from CAs built in
+* Servers buy certificates from CAs
+* Certificates are authentication for the browser
+* Let's encrypt by Mozilla is a free CA that should be good enough for most sites
+* You should be using TLS if you have a domain of your own
+
+### Password Storage
+* Obviously never store passwords plaintext
+* It is equally stupid to store passwords using your own encoding or encryption scheme - this will be very weak security
+* Hashing is still not much better than nothing at all
+* The most frequent hash will be 123456
+
+### Theory: hash-salt-stretch
+* Pick a random salt for each user and store a hash of the salt and password
+* Then stretch the hash 
+
+### Practice
+* Use wg/scrypt passowrd storage method
+* Uses a number of methods to reliably and with a certain level of security store passwords in a databse
+* Methods to produce tag of a password to store and to check if password are correct.
+Use a library - dont implement own crypto 
+* Use library with one of the functions bcrypt, scrypt or argon2
+
+### Password rules
+* Only rule really needed is a minimum length of 8 characters
+* Using a combination of non-letter characters and capitals does not contribute much to a passwords strength for the majority of the population
+* NIST SP 800-63-3
