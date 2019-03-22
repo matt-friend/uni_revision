@@ -639,6 +639,49 @@ Mnemonics are used in assembler instructions
 
 ---
 
-## David May 11/03
+## David May 22/03
+
+* Divide memory in half
+* Application base register and application size register
+* Ink (in kernel) setter variable
+* Ab is a pointer
+
+* Functions: 
+* SETAB -  if ink as <- s else error
+* SETAS - 
+* if ink then mem[oreg] <- areg else if oreg < as then  mem[ab+oreg] <- areg else error
+* modifying storing and loading is done in the same way, ensures that data is in correct range
+* makes sure that if an application is running and using memory it can only access its own portion of memory
+
+* Storing is the most important for this as it is the instruction that can do damage by overwriting critical data
+* Branching - we dont want the program to branch into other programs or the kernel
+* So if in kernel can go anywhere else movement in memory has to be done carefully
+
+* program memory space is relocatable; can be set anywhere in memory that isnt the kernel, just have to change the register values of ab and as
+* this also allows for multiple programs to be running in the memory space
+
+* Imagine having a collection of applications open andd running in memory
+* The kernel will use a timer interrupt to switch the running program
+* Not always efficient as some programs will be doing more than others and are allocated the same amount of time
+* Scheducling systems are better now
+
+* Maintain in the kernel a list of runnable processes 
+* Take one from the list and execute until it can no longer continue/ end of time slot
+* When they become runnable again added back into collection
+* Modern day scheduling has ways of determing priority and time slotting for programs.
+* Possible might have more processes than can fit on memory (so store them in backing data/ secondary data ) - very slow (virtual memory)
+
+* TIMER
+* INPUT INTERRUPT
+* KERNEL CALL INPUT
+* OUTPUT INTERRUPT - attempt to take data out the buffer else wait for a program to place data there
+* KERNEL CALL OUTPUT - data will be put into the output buffer ...
+
+* PAGE FAULTS - modern computer memory divded into pages
+* if program tries to reach outside of the memory a page fault occurs - where is page in memory, what program does it belong to
+
+* KERNEL CALLS
+* ERRORS
+
 
  
