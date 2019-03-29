@@ -518,3 +518,69 @@ Use a library - dont implement own crypto
 * Only rule really needed is a minimum length of 8 characters
 * Using a combination of non-letter characters and capitals does not contribute much to a passwords strength for the majority of the population
 * NIST SP 800-63-3
+
+---
+
+## Java EE (Enterprise Edition)
+
+### Maven
+* Java can get very complicated with dependencies and packages and config files etc - maven (and ant) try to simplify this for you.
+* Maven is a java build and dependency management system
+* Number of operations - clean, compile, package - creates JAR or WAR archive
+
+#### Artifacts
+* In maven, everthing is an artifact and has a (groupID, artifactID, version) "primary key".
+
+#### Dependency management
+* artifacts have their primary key
+* artifacts can be hosted in repositories
+* artifacts can have dependencies, maven solves these
+
+#### pom.xml
+* Most important file
+* project object mapping
+* definition of project
+* has "primary keys" - lets others use artifacts from your repository
+* properties, dependencies, build -> plugins
+
+### servlets
+
+#### WAR	
+* JAR - java archive
+* WAR - web archive (jar with extra web-inf folder)
+* java application servers (tomcat, jetty etc) and Google app engine run this
+* a jee server can host multiple applications in different war files, with different context paths
+
+* the premise of servlets is that you convert a standard java class by extending and overriding httpservlet.
+* override the doGet and doPut etc methods
+* remember to set content type
+* Set headers first - setting after body output causes excpetions and errors
+
+
+* Resources - you usually cannot read the file sustem from a web application
+* The GAE way: place the files you want to be shared in src/main/resources and load the as a stream
+
+### JSP, JSTL, EL
+* companion to servlets, giving access to other outputs
+
+#### Templating
+* Idea: separate application logic and presentation
+* Logic produces data, template displays it nicely
+* Old JSP very poor, small and difficult to read tags, especially with large applications. Managing becomes very hard
+* Did have some useful features such as java code between percent tags
+
+* Set attributes to export the data to JSP templates.
+* better way is to (in servlets doGet) put JSP templates in WEB-INF. forward the request to the template to render.
+
+* EL - expression language
+* JSTL - JSP standard tag library
+* basic operations to make things easier
+* e.g. if, choose, when, otherwise, for
+* inside \<c: tag
+
+* remember to always HTML-escape user generated data (for security)
+
+* JSTL doesnt do anything that JSP doesnt do (does less) but very useful if you know what you are doing
+
+### Google App Engine
+* Use to deploy application to the cloud
